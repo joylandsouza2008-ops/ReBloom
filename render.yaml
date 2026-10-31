@@ -15,10 +15,10 @@ services:
         sync: false
       - key: GRIEVANCE_NAME
         value: Team Phoenix Queens
-      - key: ADZUNA_APP_ID
+      - key: JOOBLE_API_KEY
         sync: false
-      - key: ADZUNA_APP_KEY
-        sync: false
+      - key: JOOBLE_HOST
+        value: jooble.org
       - key: FIREBASE_API_KEY
         sync: false
       - key: FIREBASE_AUTH_DOMAIN

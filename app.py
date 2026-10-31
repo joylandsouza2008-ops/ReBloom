@@ -4,7 +4,7 @@ ReBloom server (Team Phoenix Queens).
 Serves the website and four API endpoints:
   POST /api/translate  career-break story  -> skills profile        (Groq API, free tier, open models)
   POST /api/plan       child age, support  -> phased return plan    (Groq)
-  POST /api/jobs       role, city, filters -> real jobs/internships (Adzuna API, ranked by Groq)
+  POST /api/jobs       role, city, filters -> real jobs/internships (Jooble API, free, ranked by Groq)
   POST /api/chat       chat messages       -> reply + app actions   (Groq with tool calling)
 
 Groq's API does not keep or train on requests by default, so stories can be sent there.
@@ -33,8 +33,8 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GRIEVANCE_EMAIL = os.environ.get("GRIEVANCE_EMAIL", "")
 GRIEVANCE_NAME = os.environ.get("GRIEVANCE_NAME", "Team Phoenix Queens")
 FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
-ADZUNA_APP_ID = os.environ.get("ADZUNA_APP_ID", "")
-ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "")
+JOOBLE_API_KEY = os.environ.get("JOOBLE_API_KEY", "")
+JOOBLE_HOST = os.environ.get("JOOBLE_HOST", "jooble.org")   # set to in.jooble.org if your key is for the India site
 AI_CALLS_PER_HOUR = int(os.environ.get("AI_CALLS_PER_HOUR", "40"))
 
 _google_req = google_requests.Request()
@@ -76,7 +76,7 @@ def config():
         },
         ai=bool(GROQ_API_KEY),
         grievance={"name": GRIEVANCE_NAME, "email": GRIEVANCE_EMAIL},
-        jobs=bool(ADZUNA_APP_ID and ADZUNA_APP_KEY),
+        jobs=bool(JOOBLE_API_KEY),
     )
 
 
@@ -273,8 +273,7 @@ def api_plan():
     return jsonify(do_plan(*plan_inputs(data), lang_of(data)))
 
 
-# --------------------------------------------------------------------------- 3. jobs (Adzuna, India)
-ADZUNA_URL = "https://api.adzuna.com/v1/api/jobs/in/search/1"
+# --------------------------------------------------------------------------- 3. jobs (Jooble, free API, India)
 FLAG_PATTERNS = {
     "remote": r"work[\s-]?from[\s-]?home|\bwfh\b|\bremote\b|\bhybrid\b",
     "parttime": r"part[\s-]?time",
@@ -290,36 +289,30 @@ def clean(s):
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(s or ""))).strip()
 
 
-def adzuna_search(what, where, kind):
-    if not (ADZUNA_APP_ID and ADZUNA_APP_KEY):
-        raise ApiError(503, "not_configured", "Job search isn't set up on the server yet (Adzuna keys are missing).")
-    query = f"{what} intern" if kind == "internship" else what
-    key = (query.lower(), where.lower())
+def search_listings(what, where, kind):
+    if not JOOBLE_API_KEY:
+        raise ApiError(503, "not_configured", "Job search isn't set up on the server yet (JOOBLE_API_KEY is missing).")
+    query = f"{what} internship" if kind == "internship" else what
+    location = where or "India"
+    key = (query.lower(), location.lower())
     hit = _job_cache.get(key)
     if hit and time.time() - hit[0] < 900:
         return hit[1]
-    params = {"app_id": ADZUNA_APP_ID, "app_key": ADZUNA_APP_KEY, "results_per_page": 50,
-              "what": query, "max_days_old": 45, "sort_by": "relevance", "content-type": "application/json"}
-    if where:
-        params["where"] = where
-    r = requests.get(ADZUNA_URL, params=params, timeout=15)
+    r = requests.post(f"https://{JOOBLE_HOST}/api/{JOOBLE_API_KEY}", timeout=20,
+                      json={"keywords": query, "location": location, "page": "1", "ResultOnPage": "40"})
     if r.status_code != 200:
-        app.logger.warning("Adzuna %s: %s", r.status_code, r.text[:300])
+        app.logger.warning("Jooble %s: %s", r.status_code, r.text[:300])
         raise ApiError(502, "jobs_unavailable", "The job search service didn't answer. Try again in a moment.")
     jobs = []
-    for j in r.json().get("results", []):
-        desc = clean(j.get("description"))
-        title = clean(j.get("title"))
-        text = f"{title} {desc}".lower()
+    for i, j in enumerate((r.json() or {}).get("jobs") or []):
+        desc, title = clean(j.get("snippet")), clean(j.get("title"))
+        text = f"{title} {desc} {j.get('type') or ''}".lower()
         flags = [f for f, pat in FLAG_PATTERNS.items() if re.search(pat, text)]
-        if j.get("contract_time") == "part_time" and "parttime" not in flags:
-            flags.append("parttime")
         jobs.append({
-            "id": str(j.get("id")), "title": title,
-            "company": clean((j.get("company") or {}).get("display_name")) or None,
-            "location": clean((j.get("location") or {}).get("display_name")) or None,
-            "created": j.get("created"), "url": j.get("redirect_url"),
-            "salary_min": j.get("salary_min"), "salary_max": j.get("salary_max"),
+            "id": str(j.get("id") or i), "title": title,
+            "company": clean(j.get("company")) or None, "location": clean(j.get("location")) or None,
+            "created": j.get("updated"), "url": j.get("link"),
+            "salary": clean(j.get("salary")) or None, "source": clean(j.get("source")) or None,
             "snippet": desc[:240], "flags": flags,
         })
     _job_cache[key] = (time.time(), jobs)
@@ -338,7 +331,7 @@ RANK_SCHEMA = {
 
 
 def do_jobs(what, where, kind, flags, skills, lang):
-    jobs = adzuna_search(what, where, kind)
+    jobs = search_listings(what, where, kind)
     found = len(jobs)
     if flags:
         jobs = [j for j in jobs if all(f in j["flags"] for f in flags)]
@@ -388,7 +381,7 @@ CHAT_TOOLS = [
          "childcare": {"type": "string", "enum": list(CARE)},
          "goal": {"type": "string", "enum": list(GOAL)}}}},
     {"name": "search_jobs",
-     "description": "Search real, current job or internship listings in India (Adzuna) and show them on her Jobs page. Returns the top matches.",
+     "description": "Search real, current job or internship listings in India (Jooble) and show them on her Jobs page. Returns the top matches.",
      "input_schema": {"type": "object", "properties": {
          "what": {"type": "string", "description": "Role or keywords in English"},
          "where": {"type": "string", "description": "City in India, or empty for all India"},
@@ -406,7 +399,7 @@ def chat_system(profile, lang):
         f"- Reply in the language she writes in. The app is showing {lang}.\n"
         "- Use the tools to act in the app: translate her story when she describes her break, build her plan when she mentions her "
         "child's age, childcare or goal, and search jobs when she asks about work or internships. After a tool, say in one sentence what changed.\n"
-        "- Job listings come from Adzuna and are real. Their policies are only what each listing says; suggest she confirm with the employer.\n"
+        "- Job listings come from Jooble and are real. Their policies are only what each listing says; suggest she confirm with the employer.\n"
         "- For maternity rights in India, give general information (for example the Maternity Benefit Act on leave, creches and work from home) "
         "and suggest she confirm with HR or an official source. You are not a lawyer.\n"
         "- If she sounds tired, low or overwhelmed, respond kindly first. If she says she feels hopeless, cannot cope, or has thoughts of "
