@@ -393,6 +393,9 @@ CHAT_TOOLS = [
 
 
 def chat_system(profile, lang):
+    jobs_note = "" if JOOBLE_API_KEY else (
+        "- Live job search is not switched on yet. If she asks for jobs, suggest roles and search words from her skills "
+        "and tell her the Jobs page is coming soon. Never invent job listings, companies or links.\n")
     return (
         GUIDE + "\nYou are the ReBloom assistant, a warm, practical career guide.\n"
         "- Keep replies short: 2 to 5 sentences, or a few '- ' bullet points. Use **bold** sparingly. No headings or tables.\n"
@@ -400,6 +403,7 @@ def chat_system(profile, lang):
         "- Use the tools to act in the app: translate her story when she describes her break, build her plan when she mentions her "
         "child's age, childcare or goal, and search jobs when she asks about work or internships. After a tool, say in one sentence what changed.\n"
         "- Job listings come from Jooble and are real. Their policies are only what each listing says; suggest she confirm with the employer.\n"
+        + jobs_note +
         "- For maternity rights in India, give general information (for example the Maternity Benefit Act on leave, creches and work from home) "
         "and suggest she confirm with HR or an official source. You are not a lawyer.\n"
         "- If she sounds tired, low or overwhelmed, respond kindly first. If she says she feels hopeless, cannot cope, or has thoughts of "
@@ -425,7 +429,8 @@ def api_chat():
 
     actions, reply = [], []
     convo = [{"role": "system", "content": chat_system(profile, lang)}] + messages
-    tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in CHAT_TOOLS]
+    available = [t for t in CHAT_TOOLS if t["name"] != "search_jobs" or JOOBLE_API_KEY]   # no job key yet: don't offer job search
+    tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in available]
     for _ in range(5):
         msg = groq({"messages": convo, "tools": tools, "tool_choice": "auto", "temperature": 0.6, "max_tokens": 1200})
         if (msg.get("content") or "").strip():

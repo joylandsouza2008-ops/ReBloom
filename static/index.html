@@ -446,7 +446,7 @@ footer b{color:var(--text)}
       <p class="w-greet" id="greet" hidden></p>
       <button class="w-start" id="startBtn"><span data-i="start">Start</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <ul class="facts">
-        <li><strong data-i="fa1">Real jobs</strong><span data-i="fb1">Live listings from Jooble</span></li>
+        <li><strong data-i="fa1">Real jobs</strong><span data-i="fb1">Jobs and internships</span></li>
         <li><strong data-i="fa2">AI guide</strong><span data-i="fb2">Free, open AI models</span></li>
         <li><strong data-i="fa3">Private</strong><span data-i="fb3">Only you see your story</span></li>
       </ul>
@@ -656,6 +656,10 @@ footer b{color:var(--text)}
       <div class="page-head"><div><h1 data-i="t3">Jobs and internships</h1>
         <p data-i="l3">Real, current listings in India, ranked against your skills.</p></div>
         <span class="saved"><i></i><span class="savedTxt"></span></span></div>
+      <div class="card jobs-soon" id="jobsSoon" hidden>
+        <h2 data-i="js1">Live job search is coming soon</h2>
+        <p class="help" data-i="js2">We're connecting ReBloom to a free source of real job and internship listings. Until then, use the roles suggested on your Skills page to search on job sites you trust, and never pay anyone to get a job.</p>
+      </div>
       <form class="card job-search" id="jobForm" novalidate>
         <div class="jfields">
           <div><label for="jobWhat" data-i="jw">Role or keywords</label><input type="text" id="jobWhat" maxlength="80" placeholder="e.g. accounts executive"></div>
@@ -846,6 +850,7 @@ const KN = {
   r1:"ನಿಮ್ಮ ಡೇಟಾ ಮತ್ತು ಹಕ್ಕುಗಳು", r2:"ರಿಬ್ಲೂಮ್ ನಿಮ್ಮ ಬಗ್ಗೆ ಹೊಂದಿರುವುದನ್ನು ನೋಡಿ ಅಥವಾ ಅಳಿಸಿ. ಅಳಿಸಿದರೆ ಒಪ್ಪಿಗೆಯೂ ಹಿಂಪಡೆಯಲಾಗುತ್ತದೆ.", r3:"ನನ್ನ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ", r4:"ನನ್ನ ಖಾತೆ ಮತ್ತು ಡೇಟಾ ಅಳಿಸಿ",
   r5:"<b>ಎಲ್ಲವನ್ನೂ ಅಳಿಸಬೇಕೇ?</b> ನಿಮ್ಮ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್ ಮತ್ತು ಸೈನ್-ಇನ್ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ. ಇದನ್ನು ಹಿಂದಿರುಗಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.", r6:"ಎಲ್ಲವನ್ನೂ ಅಳಿಸಿ", r7:"ರದ್ದುಮಾಡಿ", r8:"ಪ್ರಶ್ನೆ ಅಥವಾ ದೂರುಗಳು:",
   storyWarn:"ಹೆಸರು, ಫೋನ್ ಸಂಖ್ಯೆ, ವಿಳಾಸ ಅಥವಾ ಯಾರದೇ ಆರೋಗ್ಯ ವಿವರಗಳನ್ನು ಬರೆಯಬೇಡಿ. ನಿಮ್ಮ ಕಥೆಯನ್ನು ಪ್ರೊಫೈಲ್ ರಚಿಸಲು Groq ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.",
+  js1:"ನೇರ ಉದ್ಯೋಗ ಹುಡುಕಾಟ ಶೀಘ್ರದಲ್ಲೇ", js2:"ನಿಜವಾದ ಉದ್ಯೋಗ ಮತ್ತು ಇಂಟರ್ನ್‌ಶಿಪ್ ಪಟ್ಟಿಗಳ ಉಚಿತ ಮೂಲಕ್ಕೆ ರಿಬ್ಲೂಮ್ ಅನ್ನು ಸಂಪರ್ಕಿಸುತ್ತಿದ್ದೇವೆ. ಅಲ್ಲಿಯವರೆಗೆ ನಿಮ್ಮ ಕೌಶಲ್ಯ ಪುಟದ ಹುದ್ದೆಗಳನ್ನು ನೀವು ನಂಬುವ ಉದ್ಯೋಗ ತಾಣಗಳಲ್ಲಿ ಹುಡುಕಿ. ಉದ್ಯೋಗಕ್ಕಾಗಿ ಯಾರಿಗೂ ಹಣ ಕೊಡಬೇಡಿ.",
   t5:"ಇನ್ನಷ್ಟು", l5:"ನಿಮ್ಮ ಖಾತೆ, ರಿಬ್ಲೂಮ್ ಮುಂದೆ ಸೇರಿಸುವುದು ಮತ್ತು ಅದರ ಹಿಂದಿನ ತಂಡ.",
   t4:"ಸಂಪೂರ್ಣ ವೇದಿಕೆ", l4:"ಮುಂದಿನ ಯೋಜನೆ: ರಜೆಗೆ ಮೊದಲು, ವಿರಾಮದ ಸಮಯದಲ್ಲಿ ಮತ್ತು ಮರಳುವಾಗ ಬೆಂಬಲ.",
   g1:"ರಜೆಗೆ ಮೊದಲು", g2:"ವಿರಾಮದ ಸಮಯದಲ್ಲಿ", g3:"ಮರಳುವಾಗ",
@@ -997,6 +1002,7 @@ async function initFirebase(){
   let cfg;
   try { cfg = await (await fetch("/api/config")).json(); } catch(e) { return signinError("Couldn't reach the ReBloom server."); }
   showContact(cfg.grievance);
+  if (!cfg.jobs) { $("#jobsSoon").hidden = false; $("#jobForm").hidden = true; $("#jobList").hidden = true; $("#jobStatus").hidden = true; $(".attrib").hidden = true; }
   if (!window.firebase || !cfg.firebase || !cfg.firebase.apiKey) return signinError("Sign-in isn't set up yet. Add the Firebase settings on the server.");
   firebase.initializeApp(cfg.firebase); fbAuth = firebase.auth(); fbDb = firebase.firestore();
   fbAuth.getRedirectResult().catch(e => signinError(authMsg(e)));
