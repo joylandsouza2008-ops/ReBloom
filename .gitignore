@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+.dev/
+.vids/
+.newjs.js
+.t*.js
+.shot-*.png
+.s-*.png
+.ask-*.png
+.pre-*.html
+single-page-backup.html
+claude-artifact-version.html
+node_modules/

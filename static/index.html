@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ReBloom helps mothers return to work after a career break: skill translator, return plan and mother-friendly jobs. By Team Phoenix Queens.">
+<title>ReBloom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;600;700&display=swap">
+<style>
+/* Layout: an app in pages, like AquaNexus. Welcome screen -> sign in -> four pages
+   (Skills, Plan, Jobs, More) with tabs under the top bar on computers and a tab bar at the bottom on phones.
+   Look: calm and flat, black and white only, round shapes, Phoenix Queens mark. */
+:root{
+  --bg:#0a0a0a; --card:#141414; --surface:#1a1a1a; --hair:#262626; --hair-strong:#737373;
+  --text:#ffffff; --text2:#a3a3a3; --muted:#5c5c5c; --on-text:#000000; --start-hover:#d4d4d4;
+  --primary:#ffffff; --on-primary:#000000; --secondary:#262626; --on-secondary:#ffffff; --petal:#d4d4d4;
+  --font:"Noto Sans","Noto Sans Kannada","Nirmala UI",system-ui,sans-serif;
+  --display:"Manrope","Noto Sans","Noto Sans Kannada",system-ui,sans-serif;
+  --r-card:18px; --r-inner:12px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#fafafa; --card:#ffffff; --surface:#f2f2f2; --hair:#e5e5e5; --hair-strong:#8a8a8a;
+  --text:#0a0a0a; --text2:#525252; --muted:#a3a3a3; --on-text:#ffffff; --start-hover:#333333;
+  --primary:#0a0a0a; --on-primary:#ffffff; --secondary:#ececec; --on-secondary:#0a0a0a; --petal:#c4c4c4; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#fafafa; --card:#ffffff; --surface:#f2f2f2; --hair:#e5e5e5; --hair-strong:#8a8a8a;
+  --text:#0a0a0a; --text2:#525252; --muted:#a3a3a3; --on-text:#ffffff; --start-hover:#333333;
+  --primary:#0a0a0a; --on-primary:#ffffff; --secondary:#ececec; --on-secondary:#0a0a0a; --petal:#c4c4c4; color-scheme:light}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:1.125rem;line-height:1.7;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h2{font-size:1.375rem;font-weight:700;line-height:1.45}
+h3{font-size:1.125rem;font-weight:600;line-height:1.4}
+p{margin:0}
+button,select,textarea,input{font:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+
+/* ---------------- top bar ---------------- */
+.bar{border-bottom:1px solid var(--hair);background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:30}
+.bar .in{max-width:1200px;margin:0 auto;padding:.625rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.brand{display:inline-flex;align-items:center;gap:.625rem;font-family:var(--display);font-weight:700;font-size:1.0625rem;white-space:nowrap;background:none;border:0;color:var(--text);padding:0;cursor:pointer}
+.brand svg{width:34px;height:34px;color:var(--primary)}
+.tools{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.seg{position:relative;display:inline-flex;gap:4px;padding:4px;background:var(--card);border:1px solid var(--hair);border-radius:9999px}
+.seg button{position:relative;z-index:1;min-height:40px;padding:0 .9rem;border:0;border-radius:9999px;background:transparent;color:var(--text);font-weight:500;font-size:.9375rem;cursor:pointer;transition:color .3s}
+.seg button[aria-pressed="true"]{color:var(--on-primary)}
+.seg .hl{position:absolute;top:0;left:0;width:0;height:0;border-radius:9999px;background:var(--primary)}
+.who{display:inline-flex;align-items:center;gap:.5rem;padding:4px;border:1px solid var(--hair);border-radius:9999px;background:var(--card)}
+.who img,.av{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
+.av{display:grid;place-items:center;background:var(--secondary);color:var(--on-secondary);font-weight:700;font-size:.9375rem}
+.who span{font-size:.9375rem;font-weight:600;max-width:12ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:.75rem}
+
+/* ---------------- tabs: under the bar on computers, at the bottom on phones ---------------- */
+.tabs{display:none}
+body[data-screen="app"] .tabs{display:block}
+.tabs .in{max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;gap:.25rem;position:relative}
+.tab{display:inline-flex;align-items:center;gap:.5rem;min-height:52px;padding:0 1rem;border:0;background:transparent;color:var(--text2);font-weight:600;font-size:1rem;cursor:pointer}
+.tab svg{width:20px;height:20px;flex:none}
+.tab[aria-current="page"]{color:var(--text)}
+.tab:hover{color:var(--text)}
+.tabs .line{position:absolute;bottom:0;left:0;height:3px;width:0;border-radius:3px 3px 0 0;background:var(--primary)}
+@media (min-width:768px){
+  .tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:25;background:var(--bg);border-bottom:1px solid var(--hair)}
+}
+@media (max-width:767px){
+  .bar{position:static}
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--hair);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tabs .in{padding:0;gap:0}
+  .tab{flex:1;flex-direction:column;justify-content:center;gap:.125rem;min-height:64px;padding:.375rem 0;font-size:.8125rem}
+  .tab svg{width:24px;height:24px}
+  .tab[aria-current="page"]{color:var(--on-secondary)}
+  .tabs .line{top:6px;bottom:auto;height:32px;border-radius:16px;background:var(--secondary)}
+  .tab{position:relative;z-index:1}
+  body[data-screen="app"] main{padding-bottom:calc(6rem + env(safe-area-inset-bottom,0px))}
+}
+
+main{max-width:1200px;margin:0 auto;padding:1.5rem 1rem 4rem}
+@media (min-width:768px){main{padding:2rem 1.5rem 4rem}}
+.page{display:flex;flex-direction:column;gap:1.5rem}
+.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.5rem 1.5rem}
+.page-head h1{font-size:clamp(1.75rem,4vw,2.25rem);font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.page-head p{color:var(--text2);font-size:1rem;max-width:62ch;margin-top:.25rem}
+.saved{display:inline-flex;align-items:center;gap:.5rem;font-size:.9375rem;color:var(--text2);white-space:nowrap}
+.saved i{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+/* ---------------- welcome screen ---------------- */
+.welcome{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:3rem;min-height:min(calc(100dvh - 9rem),720px)}
+.w-copy{display:flex;flex-direction:column;align-items:flex-start;gap:1.25rem;min-width:0}
+.presents{display:inline-flex;align-items:center;gap:.75rem;font-size:.9375rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary)}
+.presents::before{content:"";width:2rem;height:2px;flex:none;border-radius:2px;background:var(--primary)}
+:root[lang="kn"] .presents{letter-spacing:0}
+.w-title{display:flex;flex-direction:column;gap:.25rem}
+.w-name{font-family:var(--display);font-size:clamp(3.25rem,7.5vw,6rem);font-weight:800;line-height:1;letter-spacing:-.03em}
+.w-name-kn{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:600;line-height:1.45;color:var(--primary)}
+.w-tagline{max-width:34ch;font-size:clamp(1.125rem,1.8vw,1.375rem);line-height:1.6;color:var(--text2)}
+.w-greet{font-size:1.0625rem;font-weight:600}
+.w-start{margin-top:.5rem;min-height:60px;min-width:12rem;padding:0 2rem;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;border:0;border-radius:9999px;
+  background:var(--text);color:var(--on-text);font-size:1.25rem;font-weight:600;cursor:pointer;transition:background-color .15s,scale .15s}
+.w-start svg{width:24px;height:24px}
+.w-start:hover{background:var(--start-hover)}
+.w-start:active{scale:.98}
+.facts{list-style:none;margin:1rem 0 0;padding:1.25rem 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;width:100%;max-width:40rem;border-top:1px solid var(--hair)}
+.facts li{display:flex;flex-direction:column;gap:.125rem;min-width:0}
+.facts li+li{padding-left:1.5rem;border-left:1px solid var(--hair)}
+.facts strong{font-size:1rem;font-weight:600;line-height:1.4}
+.facts span{font-size:.9375rem;color:var(--text2)}
+.w-visual{position:relative;justify-self:center;width:min(420px,100%);aspect-ratio:1;max-width:100%}
+.ring{position:absolute;border:1px solid var(--hair);border-radius:50%}
+.ring.outer{inset:0}.ring.inner{inset:16%}
+.dot-path{position:absolute;inset:0;transform:rotate(45deg)}
+.dot-path i{position:absolute;left:50%;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--primary)}
+.w-logo{position:absolute;inset:24%;display:grid;place-items:center}
+.w-logo svg{width:100%;height:100%;overflow:visible}
+.w-logo .pt{fill:var(--petal);transform-box:view-box;transform-origin:50px 50px}
+.w-logo .ct{fill:var(--primary)}
+.w-logo .pt.back{fill:var(--primary);opacity:.32}
+.w-logo .stamens{fill:var(--petal)}
+.float-chip{position:absolute;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .9rem;border-radius:9999px;
+  background:var(--card);border:1px solid var(--hair);font-size:.875rem;font-weight:600;white-space:nowrap;box-shadow:0 6px 16px -12px rgba(0,0,0,.4)}
+/* moving parts get their own layer */
+.float-chip{will-change:transform}
+#petals{will-change:transform}
+.float-chip i{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+@media (max-width:767px){.float-chip{font-size:.75rem;padding:.25rem .6rem}.float-chip.hide-sm{display:none}}
+@media (max-width:767px){
+  .welcome{grid-template-columns:minmax(0,1fr);gap:1.25rem;min-height:0}
+  .w-visual{grid-row:1;width:200px}
+  .w-copy{align-items:stretch;gap:1rem}
+  .w-start{width:100%}
+  .facts{grid-template-columns:minmax(0,1fr);gap:0;padding-top:.25rem}
+  .facts li{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:0 .75rem;padding:.625rem 0}
+  .facts li+li{padding-left:0;border-left:0;border-top:1px solid var(--hair)}
+}
+
+/* ---------------- shared pieces ---------------- */
+.card{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-card);padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;min-width:0}
+.head{display:flex;flex-direction:column;gap:.25rem}
+.help{color:var(--text2);font-size:1rem;line-height:1.6;max-width:62ch}
+label,.label{font-weight:600;font-size:1rem}
+textarea,select,input[type=text]{width:100%;border:1px solid var(--hair-strong);border-radius:var(--r-inner);background:var(--surface);color:var(--text);padding:.75rem 1rem}
+input[type=text]{min-height:52px}
+textarea{min-height:170px;resize:vertical;font-size:1.0625rem}
+select{min-height:52px}
+.btn{min-height:52px;padding:0 1.5rem;border-radius:9999px;font-weight:600;cursor:pointer;border:0;background:var(--primary);color:var(--on-primary);display:inline-flex;align-items:center;justify-content:center;gap:.6rem}
+.btn.sec{background:transparent;color:var(--text);border:1px solid var(--hair-strong)}
+.btn.sec:hover{background:var(--surface)}
+.btn:active{scale:.98}
+.row{display:flex;gap:1rem;flex-wrap:wrap}
+.chips{display:flex;gap:.5rem;flex-wrap:wrap}
+.chip{min-height:44px;padding:.375rem 1.1rem;border-radius:9999px;border:1px solid var(--hair-strong);background:transparent;color:var(--text);font-size:1rem;font-weight:500;cursor:pointer;text-align:left}
+.chip:hover{background:var(--surface)}
+.chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.badge{display:inline-flex;align-items:center;align-self:flex-start;padding:.125rem .75rem;border-radius:9999px;font-size:.875rem;font-weight:600;line-height:1.6;background:var(--secondary);color:var(--on-secondary)}
+.badge.off{background:transparent;color:var(--muted);border:1px solid var(--hair);text-decoration:line-through;font-weight:500}
+.quiet{color:var(--text2);font-size:1rem}
+.note{display:flex;gap:1rem;align-items:flex-start;padding:.75rem 1rem;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-inner);font-size:1rem;line-height:1.6}
+.note svg{width:20px;height:20px;flex:none;fill:var(--primary);margin-top:.2rem}
+.next{display:flex;justify-content:flex-end}
+
+/* ---------------- sign in ---------------- */
+.signin-wrap{max-width:36rem;margin:2rem auto 0;display:flex;flex-direction:column;gap:1rem}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:0 .75rem 0 .25rem;border:0;border-radius:9999px;background:transparent;color:var(--text2);font-weight:500;font-size:1rem;cursor:pointer}
+.back:hover{color:var(--text)}
+.back svg{width:20px;height:20px}
+.signin-mark{width:76px;height:76px;padding:14px;border-radius:50%;background:var(--secondary);color:var(--primary)}
+.acct{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:1rem;border:1px solid var(--hair);border-radius:var(--r-inner);background:var(--surface)}
+.acct img{width:48px;height:48px;border-radius:50%}
+.acct .who-txt{display:flex;flex-direction:column;min-width:0;flex:1}
+.acct .who-txt span{font-size:.9375rem;color:var(--text2)}
+.or{display:flex;align-items:center;gap:1rem;color:var(--text2);font-size:.9375rem}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--hair)}
+
+/* ---------------- skills page ---------------- */
+.tr{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.tr-in{display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.tr-out{min-width:0}
+.tr-role{font-size:.9375rem;color:var(--text2)}
+.tr-title{font-family:var(--display);font-size:1.375rem;font-weight:700;line-height:1.35;margin:.25rem 0 .75rem}
+.skills{list-style:none;margin:0;padding:0}
+.skills li{display:flex;flex-direction:column;gap:.25rem;padding:.875rem 0;border-top:1px solid var(--hair)}
+.skills li b{font-weight:600}
+.skills li span.why{font-size:.9375rem;color:var(--text2)}
+
+/* ---------------- skill bloom chart, skeleton ---------------- */
+.bloom-chart{display:grid;grid-template-columns:132px minmax(0,1fr);gap:1.25rem;align-items:center;margin-bottom:.5rem}
+.bloom-svg{width:132px;height:132px;overflow:visible}
+.bp{fill:transparent;stroke:var(--hair-strong);stroke-width:.8;transform-box:view-box;transform-origin:50px 50px}
+.bp.on{fill:var(--primary);stroke:var(--primary)}
+.bcc{fill:var(--card);stroke:var(--hair-strong);stroke-width:.8}
+.bc-t{font-family:var(--display);font-weight:800;font-size:14px;fill:var(--text)}
+@media (max-width:420px){.bloom-chart{grid-template-columns:96px minmax(0,1fr)}.bloom-svg,.sk-c{width:96px!important;height:96px!important}}
+.skel{display:flex;flex-direction:column;gap:.75rem}
+.skel i,.sk-c{display:block;height:14px;border-radius:8px;background:var(--surface);position:relative;overflow:hidden}
+.sk-c{width:132px;height:132px;border-radius:50%}
+.skel i::after,.sk-c::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--text) 9%,transparent),transparent);animation:shimmer 1.1s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+
+/* ---------------- cinematic pieces: intro, curtain, split text, marquee ---------------- */
+#intro{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);place-items:center;cursor:pointer}
+.js-intro #intro{display:grid;animation:introSafety 0s 5s forwards}
+@keyframes introSafety{to{visibility:hidden}}
+.intro-in{position:relative;display:grid;place-items:center;width:min(360px,86vw);aspect-ratio:2/1}
+.intro-in svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#introPath{fill:none;stroke:var(--text);stroke-width:1.4;stroke-linecap:round}
+.intro-word{position:relative;font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,5vw,2.1rem);letter-spacing:.32em;text-transform:uppercase;padding-left:.32em}
+.intro-word i{display:inline-block;font-style:normal}
+.intro-sub{position:absolute;bottom:2.5rem;left:0;right:0;text-align:center;font-size:.8125rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text2)}
+#curtain{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:var(--text);color:var(--bg);transform:translateY(100%);pointer-events:none;will-change:transform}
+.curtain-word{font-family:var(--display);font-weight:700;font-size:.9375rem;letter-spacing:.35em;text-transform:uppercase}
+.sw{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+.sw > i{display:inline-block;font-style:normal;will-change:transform}
+.w-name .sw{padding-bottom:.06em}
+.marquee{grid-column:1/-1;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;pointer-events:none;user-select:none}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-track span{font-family:var(--display);font-weight:800;font-size:clamp(3.25rem,10vw,8rem);line-height:1.05;letter-spacing:-.03em;white-space:nowrap;padding-right:.4em;
+  color:transparent;-webkit-text-stroke:1px var(--hair-strong);opacity:.6}
+
+/* ---------------- ask page (assistant) ---------------- */
+.chat{display:flex;flex-direction:column;gap:1rem;padding:0;overflow:hidden}
+.chat-log{list-style:none;margin:0;padding:1.25rem 1.25rem 0;display:flex;flex-direction:column;gap:1rem;max-height:min(58vh,560px);min-height:220px;overflow-y:auto;overscroll-behavior:contain}
+.msg{display:flex;gap:.75rem;align-items:flex-start;max-width:min(46rem,100%)}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.m-av{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--secondary);color:var(--on-secondary)}
+.m-av svg{width:20px;height:20px}
+.msg.me .m-av{display:none}
+.m-body{min-width:0;padding:.75rem 1rem;border-radius:18px;background:var(--surface);border:1px solid var(--hair);border-top-left-radius:6px}
+.msg.me .m-body{background:var(--primary);color:var(--on-primary);border-color:var(--primary);border-radius:18px;border-top-right-radius:6px}
+.m-text{font-size:1rem;line-height:1.65;overflow-wrap:anywhere}
+.m-text p+p,.m-text ul+p,.m-text p+ul{margin-top:.5rem}
+.m-text ul{margin:.25rem 0 0;padding-left:1.2rem}
+.m-text li+li{margin-top:.2rem}
+.m-acts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem}
+.m-acts:not(:empty){margin-bottom:.6rem}
+.m-acts li{display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2)}
+.m-acts li::before{content:"";width:12px;height:12px;flex:none;border-radius:50%;border:1.5px solid var(--hair-strong);border-top-color:var(--text);animation:spin .8s linear infinite}
+.m-acts li.done::before{animation:none;border:0;width:12px;height:12px;background:var(--text);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+@keyframes spin{to{transform:rotate(360deg)}}
+.m-open{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
+.m-open button{min-height:36px;padding:0 .9rem;border-radius:9999px;border:1px solid var(--hair-strong);background:var(--card);color:var(--text);font-size:.875rem;font-weight:600;cursor:pointer}
+.m-open button:hover{background:var(--secondary)}
+.m-note{font-size:.875rem;color:var(--text2);margin-top:.5rem}
+.typing{display:inline-flex;gap:4px;padding:.35rem 0}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--text2);animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.ask-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.75rem;padding:1.5rem 1rem .5rem}
+.ask-empty .m-av{width:56px;height:56px}.ask-empty .m-av svg{width:30px;height:30px}
+.ask-empty h2{font-size:1.25rem}
+.ask-empty .chips{justify-content:center;margin-top:.5rem}
+.ask-form{display:flex;gap:.75rem;align-items:flex-end;padding:0 1.25rem 1.25rem}
+.ask-form textarea{min-height:52px;max-height:160px;resize:none;border-radius:26px;padding:.85rem 1.1rem;font-size:1rem;line-height:1.5}
+.ask-form .btn{flex:none;width:52px;padding:0}
+.ask-form .btn svg{width:22px;height:22px}
+.ask-foot{padding:0 1.25rem 1.25rem;margin-top:-.5rem;font-size:.8125rem;color:var(--text2)}
+.ask-off{margin:0 1.25rem 1.25rem}
+
+/* ---------------- real-data pieces ---------------- */
+.btn.google{background:var(--card);color:var(--text);border:1px solid var(--hair-strong);gap:.75rem;min-height:56px;font-size:1.0625rem}
+.btn.google svg{width:22px;height:22px}
+.btn.google:hover{background:var(--surface)}
+.btn:disabled{opacity:.55;cursor:wait}
+.note.err{border-color:var(--hair-strong)}
+.cv{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding:1rem;margin:.5rem 0 .75rem;border-radius:var(--r-inner);background:var(--surface);border:1px solid var(--hair)}
+.cv p{font-size:1rem;line-height:1.6}
+.plan-sum{font-size:1rem;margin-top:.5rem}
+.plan-sum:empty{display:none}
+.step .acts{margin:.35rem 0 0;padding-left:1.1rem;font-size:1rem;color:var(--text)}
+.step .acts li+li{margin-top:.15rem}
+.step .tip{font-size:.9375rem;color:var(--text2);margin-top:.4rem}
+.plan-empty{padding:1rem;border:1px dashed var(--hair-strong);border-radius:var(--r-inner);list-style:none}
+.job-search{gap:1rem}
+.jfields{display:grid;grid-template-columns:1.3fr 1fr;gap:1rem}
+.jfields > div{display:flex;flex-direction:column;gap:.375rem;min-width:0}
+.jrow{align-items:center;justify-content:space-between}
+@media (max-width:640px){.jfields{grid-template-columns:minmax(0,1fr)}.jrow .btn{width:100%}}
+.jobs-empty{padding:1rem 0}
+.jmeta{font-size:.875rem;color:var(--text2)}
+.jmeta:empty{display:none}
+.snip{font-size:.9375rem;color:var(--text2);line-height:1.6}
+.apply{align-self:flex-start;min-height:44px;text-decoration:none}
+.attrib{font-size:.875rem;color:var(--text2)}
+.attrib a{color:var(--text)}
+
+/* ---------------- privacy, terms, consent, rights ---------------- */
+.legal-wrap{max-width:46rem;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+.legal{gap:.75rem}
+.legal h1{font-size:clamp(1.75rem,4vw,2.25rem);font-weight:800;letter-spacing:-.02em}
+.legal h2{font-size:1.125rem;margin-top:1rem}
+.legal p,.legal li{font-size:1rem;line-height:1.7}
+.legal ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.35rem}
+.legal a,.legal-links a,#rights a,.consent a{color:var(--text);text-underline-offset:3px}
+.eyebrow{font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
+.tbl{overflow-x:auto;border:1px solid var(--hair);border-radius:var(--r-inner)}
+.tbl table{border-collapse:collapse;width:100%;min-width:520px;font-size:.9375rem}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:.6rem .75rem;border-bottom:1px solid var(--hair)}
+.tbl th{font-weight:600;background:var(--surface)}
+.tbl tr:last-child td{border-bottom:0}
+.consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.9375rem;font-weight:400;line-height:1.6;padding:.75rem;border:1px solid var(--hair);border-radius:var(--r-inner);cursor:pointer}
+.consent input{width:20px;height:20px;flex:none;margin-top:.15rem;accent-color:var(--primary)}
+.small{font-size:.875rem}
+.legal-links a{color:var(--text2)}
+.btn.danger{border-color:var(--text)}
+.btn.danger-solid{background:var(--text);color:var(--on-text)}
+.confirm{display:flex;flex-direction:column;gap:.75rem;padding:1rem;border:1px solid var(--text);border-radius:var(--r-inner)}
+
+/* ---------------- toast ---------------- */
+.toast{position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:.6rem;
+  padding:.65rem 1.15rem;border-radius:9999px;background:var(--text);color:var(--on-text);font-size:.9375rem;font-weight:600;box-shadow:0 12px 32px -14px rgba(0,0,0,.55);white-space:nowrap}
+.toast svg{width:18px;height:18px;color:var(--primary)}
+@media (max-width:767px){.toast{bottom:calc(5.75rem + env(safe-area-inset-bottom,0px))}}
+
+/* ---------------- plan page ---------------- */
+.plan{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:1.5rem;align-items:start}
+.plan-controls{display:flex;flex-direction:column;gap:1.25rem}
+.age{font-family:var(--display);font-size:2.5rem;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.age small{font-family:var(--font);font-size:1rem;font-weight:400;color:var(--text2);margin-left:.4rem}
+input[type=range]{width:100%;accent-color:var(--primary);min-height:32px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.step{display:flex;gap:1rem;align-items:flex-start;padding:.875rem 1rem;border-radius:var(--r-inner);background:var(--surface);border-left:3px solid transparent}
+.step.now{border-left-color:var(--primary)}
+.box{flex:none;display:grid;place-items:center;width:32px;height:32px;margin-top:.1rem;border:2px solid var(--primary);border-radius:50%;font-size:.875rem;font-weight:700;color:var(--primary)}
+.step.done .box{background:var(--primary);color:var(--on-primary)}
+.step.done h3{color:var(--text2)}
+.step .when{font-size:.9375rem;color:var(--text2)}
+.step p{font-size:1rem;color:var(--text2);margin-top:.125rem}
+.step h3{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .625rem}
+
+.plan-right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.track-plan{position:relative;padding-top:2.4rem}
+.tp-bar{display:flex;gap:3px;height:12px}
+.tp-seg{border-radius:9999px;background:var(--hair);transition:background-color .4s}
+.tp-seg.done{background:var(--primary)}
+.tp-seg.now{background:color-mix(in srgb,var(--primary) 45%,transparent)}
+.tp-pin{position:absolute;top:0;width:0;height:3.4rem;transition:left .35s cubic-bezier(.2,.8,.2,1)}
+.tp-pin b{position:absolute;top:0;left:0;padding:.05rem .6rem;border-radius:9999px;background:var(--text);color:var(--on-text);font-size:.8125rem;font-weight:700;white-space:nowrap;transition:transform .4s}
+.tp-pin i{position:absolute;left:-1px;top:1.45rem;width:2px;height:1.75rem;border-radius:2px;background:var(--text)}
+.tp-ticks{position:relative;height:1.5rem;margin-top:.4rem;font-size:.8125rem;color:var(--text2);font-variant-numeric:tabular-nums}
+.tp-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.tp-ticks span:first-child{transform:none}.tp-ticks span:last-child{transform:translateX(-100%)}
+.tp-legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.875rem;color:var(--text2)}
+.tp-legend span{display:inline-flex;align-items:center;gap:.4rem}
+.tp-legend i{width:18px;height:8px;border-radius:9999px;background:var(--hair)}
+.tp-legend .l-done{background:var(--primary)}.tp-legend .l-now{background:color-mix(in srgb,var(--primary) 45%,transparent)}
+
+/* ---------------- jobs page ---------------- */
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1rem}
+.job{display:flex;flex-direction:column;gap:.875rem;padding:1.25rem;border:1px solid var(--hair);border-radius:var(--r-card);background:var(--card);min-width:0;transition:border-color .2s,transform .2s}
+.job:hover{border-color:var(--hair-strong);transform:translateY(-2px)}
+.job-top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+.job .co{font-size:.9375rem;color:var(--text2)}
+.ring-m{position:relative;width:64px;height:64px;flex:none}
+.ring-m svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-m .rb{fill:none;stroke:var(--hair);stroke-width:4}
+.ring-m .rf{fill:none;stroke:var(--primary);stroke-width:4;stroke-linecap:round}
+.ring-m b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
+.mlabel{font-size:.875rem;color:var(--text2);margin-top:-.5rem}
+.policies{display:flex;gap:.375rem;flex-wrap:wrap}
+.job .foot{font-size:.9375rem;color:var(--text2);padding-top:.75rem;border-top:1px solid var(--hair)}
+
+/* ---------------- more page ---------------- */
+.profile{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.profile .av,.profile img{width:56px;height:56px;font-size:1.25rem}
+.profile .p-txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.profile .p-txt span{font-size:.9375rem;color:var(--text2)}
+.stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
+.stage h3{font-family:var(--font);font-size:.9375rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:.25rem}
+:root[lang="kn"] .stage h3{letter-spacing:0}
+.stage ul{list-style:none;margin:0;padding:0}
+.stage li{display:flex;flex-direction:column;gap:.125rem;padding:.75rem 0;border-top:1px solid var(--hair)}
+.stage li b{font-weight:600;font-size:1.0625rem}
+.stage li span{font-size:.9375rem;color:var(--text2)}
+.closing h2{font-size:clamp(1.5rem,3.5vw,2.25rem);font-weight:800;line-height:1.2;letter-spacing:-.02em;max-width:24ch}
+.closing h2 span{color:var(--text2)}
+.closing h2 b{color:var(--primary)}
+.team{display:flex;align-items:center;gap:1rem}
+.team svg{width:48px;height:48px;color:var(--primary);flex:none}
+
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1200px;margin:0 auto;padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.25rem;font-size:.9375rem;color:var(--text2)}
+footer b{color:var(--text)}
+@media (max-width:767px){body[data-screen="app"] footer{display:none}}
+
+@media (max-width:860px){.tr,.plan{grid-template-columns:minmax(0,1fr)}.stages{grid-template-columns:minmax(0,1fr);gap:1rem}}
+
+/* ---------------- tap ring (touch screens) ---------------- */
+.tap{position:fixed;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1.5px solid var(--primary);pointer-events:none;z-index:9999;animation:tap .5s ease-out forwards}
+@keyframes tap{to{transform:scale(4);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("js-intro");</script>
+<div id="intro" aria-hidden="true">
+  <div class="intro-in"><svg viewBox="0 0 360 180"><path id="introPath"/></svg>
+    <p class="intro-word"><i>R</i><i>e</i><i>B</i><i>l</i><i>o</i><i>o</i><i>m</i><i>.</i></p></div>
+  <p class="intro-sub">Team Phoenix Queens</p>
+</div>
+<div id="curtain" aria-hidden="true"><span class="curtain-word">ReBloom</span></div>
+
+<!-- Phoenix Queens mark, reused below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pq" viewBox="0 0 48 48">
+    <g fill="currentColor">
+      <path d="M17 13V7l3.5 3L24 5l3.5 5L31 7v6z"/>
+      <path d="M24 44c-7.5-5.5-8.5-14.5 0-27 8.5 12.5 7.5 21.5 0 27z"/>
+      <path d="M21.5 31c-7.5.3-13.5-5-16-14 5.5 4 10.5 6 16 7z"/>
+      <path d="M26.5 31c7.5.3 13.5-5 16-14-5.5 4-10.5 6-16 7z"/>
+    </g>
+    <circle cx="24" cy="30" r="2.6" fill="var(--bg)"/>
+  </symbol>
+</svg>
+
+<header class="bar"><div class="in">
+  <button class="brand" id="home" aria-label="ReBloom home"><svg aria-hidden="true"><use href="#pq"/></svg>Phoenix Queens</button>
+  <div class="tools">
+    <div class="seg" id="langSeg" role="group" aria-label="Language"><span class="hl"></span><button id="lang-kn" aria-pressed="false">ಕನ್ನಡ</button><button id="lang-en" aria-pressed="true">English</button></div>
+    <div class="seg" id="themeSeg" role="group" aria-label="Theme"><span class="hl"></span><button id="th-light" aria-pressed="false" data-i="light">Light</button><button id="th-dark" aria-pressed="true" data-i="dark">Dark</button></div>
+    <div class="who" id="who" hidden><span class="av" id="whoAv" aria-hidden="true"></span><span id="whoName"></span></div>
+  </div>
+</div></header>
+
+<nav class="tabs" aria-label="Pages"><div class="in" id="tabRow">
+  <button class="tab" data-page="skills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg><span data-i="tabSkills">Skills</span></button>
+  <button class="tab" data-page="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4v-5h4v-5h4V5h4"/></svg><span data-i="tabPlan">Plan</span></button>
+  <button class="tab" data-page="jobs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg><span data-i="tabJobs">Jobs</span></button>
+  <button class="tab" data-page="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l.9-4.4A8 8 0 1 1 20 12z"/></svg><span data-i="tabAsk">Ask</span></button>
+  <button class="tab" data-page="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span data-i="tabMore">More</span></button>
+  <span class="line" id="tabLine"></span>
+</div></nav>
+
+<main>
+  <!-- ================= welcome ================= -->
+  <section class="welcome" id="welcome">
+    <div class="w-copy">
+      <p class="presents" data-i="presents">Team Phoenix Queens presents</p>
+      <h1 class="w-title"><span class="w-name" lang="en"><span class="sw"><i>R</i></span><span class="sw"><i>e</i></span><span class="sw"><i>B</i></span><span class="sw"><i>l</i></span><span class="sw"><i>o</i></span><span class="sw"><i>o</i></span><span class="sw"><i>m</i></span></span><span class="w-name-kn" lang="kn">ರಿಬ್ಲೂಮ್</span></h1>
+      <p class="w-tagline" data-i="tagline">Motherhood isn't a gap. Turn the years of your career break into skills employers understand.</p>
+      <p class="w-greet" id="greet" hidden></p>
+      <button class="w-start" id="startBtn"><span data-i="start">Start</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <ul class="facts">
+        <li><strong data-i="fa1">Real jobs</strong><span data-i="fb1">Live listings from Adzuna</span></li>
+        <li><strong data-i="fa2">AI guide</strong><span data-i="fb2">Free, open AI models</span></li>
+        <li><strong data-i="fa3">Private</strong><span data-i="fb3">Only you see your story</span></li>
+      </ul>
+    </div>
+    <div class="w-visual" aria-hidden="true">
+      <div class="ring outer"></div><div class="ring inner"></div>
+      <div class="dot-path" id="dotPath"><i></i></div>
+      <div class="w-logo"><svg viewBox="0 0 100 100" id="bloom"><g id="petals"></g><circle class="ct" cx="50" cy="50" r="11"/><g id="stamens" class="stamens"></g></svg></div>
+      <span class="float-chip" style="left:14%;top:18%"><i></i>Budgeting</span>
+      <span class="float-chip" style="left:86%;top:30%"><i></i>Negotiation</span>
+      <span class="float-chip hide-sm" style="left:8%;top:62%"><i></i>Event planning</span>
+      <span class="float-chip" style="left:82%;top:80%"><i></i>Care coordination</span>
+      <span class="float-chip hide-sm" style="left:40%;top:98%"><i></i>Teaching</span>
+    </div>
+    <div class="marquee" aria-hidden="true"><div class="mq-track" id="mq"><span>Motherhood isn't a gap · Skills · Plan · Jobs ·</span><span>Motherhood isn't a gap · Skills · Plan · Jobs ·</span></div></div>
+  </section>
+
+  <!-- ================= sign in ================= -->
+  <section id="signin" hidden>
+    <div class="signin-wrap">
+      <button class="back" id="backHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span data-i="back">Back</span></button>
+      <div class="card">
+        <svg class="signin-mark" aria-hidden="true"><use href="#pq"/></svg>
+        <div class="head"><h2 data-i="si1">Sign in to ReBloom</h2>
+          <p class="help" data-i="si2">We need to know who you are so we can save your story, your return plan and the jobs you choose, and show them again when you come back.</p></div>
+        <label class="consent"><input type="checkbox" id="consentBox"><span>I am 18 or older. I have read the <a href="#privacy" data-legal="privacy">Privacy Notice</a> and I agree to ReBloom using my information for the purposes it describes. I also accept the <a href="#terms" data-legal="terms">Terms of Use</a>.</span></label>
+        <button class="btn google" id="googleBtn" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8h-4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg><span data-i="si4">Continue with Google</span></button>
+        <p class="note err" id="signErr" hidden></p>
+        <p class="quiet" data-i="si7">We use your Google name and photo. Your story and plan are saved to your private ReBloom profile.</p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= privacy notice and terms ================= -->
+  <section id="legal" hidden>
+    <div class="legal-wrap">
+      <button class="back" id="legalBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>Back</span></button>
+
+      <article class="card legal" id="legal-privacy">
+        <p class="eyebrow">Last updated 31 October 2026</p>
+        <h1>Privacy Notice</h1>
+        <p>ReBloom is a free student project by Team Phoenix Queens, built for the Sahyadri Science Talent Hunt 2026. It helps mothers return to work after a career break. This notice explains, in plain language, what personal data ReBloom uses, why, and the choices you have under India's Digital Personal Data Protection Act, 2023 (DPDP Act). For your data, we are the Data Fiduciary.</p>
+
+        <h2>1. The personal data we use</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Data</th><th>Where it comes from</th><th>Why we use it</th></tr></thead>
+          <tbody>
+            <tr><td>Name, email address, profile photo and account ID</td><td>Your Google account, when you sign in</td><td>To create your account, show your name and photo, and keep your profile private to you</td></tr>
+            <tr><td>Your career-break story</td><td>You type it</td><td>To create your skills profile, CV summary, return plan and job matches</td></tr>
+            <tr><td>Your child's age in months, your childcare situation and your work goal</td><td>You choose them</td><td>To build your return plan</td></tr>
+            <tr><td>Your skills profile and return plan</td><td>Created by the AI from your inputs</td><td>To show them again when you come back</td></tr>
+            <tr><td>Job search words, city and filters</td><td>You type or choose them</td><td>To search job listings and remember your last search</td></tr>
+            <tr><td>Messages you send in Ask</td><td>You type them</td><td>To answer you. Chat messages are not saved after you leave the page.</td></tr>
+            <tr><td>Technical data (IP address, browser, time of each request)</td><td>Your device, automatically</td><td>To run the website securely and stop misuse, such as too many requests</td></tr>
+          </tbody>
+        </table></div>
+        <p>We only ask for what these purposes need. Please don't type names, phone numbers, addresses or anyone's health details into your story or chat.</p>
+
+        <h2>2. Who processes your data for us</h2>
+        <ul>
+          <li><b>Google Firebase</b> handles sign-in and stores your profile in a database that only your account can read.</li>
+          <li><b>Groq</b> runs the AI model that reads your story and chat to create your skills, plan and answers. We never send your name or email. Groq states that it does not keep or train on these requests by default.</li>
+          <li><b>Adzuna</b> receives only your search words and city, never your name or story, to return job listings.</li>
+          <li><b>Render</b> hosts the website and keeps short server logs.</li>
+        </ul>
+        <p>Some of these providers process data on servers outside India, such as in the USA. We don't sell your data, show ads, share your data with employers, or let anyone train AI models on it.</p>
+
+        <h2>3. Your consent</h2>
+        <p>We use your data only after you tick the consent box and sign in. You can withdraw consent at any time, as easily as you gave it: open <b>More</b> and choose <b>Delete my account and data</b>. This deletes your profile and account. Withdrawing consent doesn't affect anything we did before you withdrew it.</p>
+
+        <h2>4. Your rights</h2>
+        <ul>
+          <li><b>Access:</b> download everything we hold about you from <b>More → Download my data</b>.</li>
+          <li><b>Correction:</b> edit your story and choices on any page. To update your name or photo, change them in your Google account.</li>
+          <li><b>Erasure:</b> delete your account and data from <b>More</b>, or email us.</li>
+          <li><b>Grievance:</b> email our contact below. We'll reply within 30 days, and always within the 90 days the law allows.</li>
+          <li><b>Nominate someone:</b> email us to name a person who can use these rights for you if you die or can't act yourself.</li>
+          <li><b>Complain to the Data Protection Board of India</b> if you're not satisfied after using our grievance process.</li>
+        </ul>
+
+        <h2>5. Children</h2>
+        <p>ReBloom is only for people aged 18 or over. We don't knowingly process the data of anyone under 18. If you think a child has signed up, email us and we'll delete the account.</p>
+
+        <h2>6. How long we keep your data</h2>
+        <p>We keep your profile until you delete it. If the ReBloom project ends, we'll delete all profiles. Server logs are kept by our hosting provider for a limited time, and for up to one year where Indian law requires it.</p>
+
+        <h2>7. Security</h2>
+        <p>The website uses HTTPS. Only signed-in users can use the AI and job search, and our API keys stay on the server. Database rules let each person read and change only her own profile. If a data breach affects you, we'll tell you and the Data Protection Board of India as the law requires.</p>
+
+        <h2>8. Changes to this notice</h2>
+        <p>If we change what data we use or why, we'll update this notice and ask for your consent again.</p>
+
+        <h2>9. Contact</h2>
+        <p>For questions, corrections, deletion, nominations or complaints, contact <span class="g-name">Team Phoenix Queens</span> at <span class="g-email">the email shown here once it is set up</span>.</p>
+
+        <h2 lang="kn">ಕನ್ನಡದಲ್ಲಿ ಸಾರಾಂಶ</h2>
+        <ul lang="kn">
+          <li>ರಿಬ್ಲೂಮ್ ಟೀಮ್ ಫೀನಿಕ್ಸ್ ಕ್ವೀನ್ಸ್ ತಂಡದ ಉಚಿತ ವಿದ್ಯಾರ್ಥಿ ಯೋಜನೆ.</li>
+          <li>ನಿಮ್ಮ Google ಹೆಸರು, ಇಮೇಲ್, ಫೋಟೋ, ನಿಮ್ಮ ವೃತ್ತಿ ವಿರಾಮದ ಕಥೆ, ಮಗುವಿನ ವಯಸ್ಸು, ಆರೈಕೆ ಮತ್ತು ಗುರಿಯನ್ನು ಕೌಶಲ್ಯ ಪ್ರೊಫೈಲ್, ಯೋಜನೆ ಮತ್ತು ಉದ್ಯೋಗ ಹುಡುಕಾಟಕ್ಕಾಗಿ ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ.</li>
+          <li>ನಿಮ್ಮ ಕಥೆಯನ್ನು AI ಮಾದರಿಗಾಗಿ Groq ಗೆ ಕಳುಹಿಸುತ್ತೇವೆ; ನಿಮ್ಮ ಹೆಸರು ಅಥವಾ ಇಮೇಲ್ ಕಳುಹಿಸುವುದಿಲ್ಲ. ಉದ್ಯೋಗ ಹುಡುಕಾಟಕ್ಕಾಗಿ ಹುಡುಕಾಟದ ಪದಗಳು ಮತ್ತು ನಗರ ಮಾತ್ರ Adzuna ಗೆ ಹೋಗುತ್ತವೆ.</li>
+          <li>ನಿಮ್ಮ ಡೇಟಾವನ್ನು ನಾವು ಮಾರುವುದಿಲ್ಲ, ಜಾಹೀರಾತು ತೋರಿಸುವುದಿಲ್ಲ ಮತ್ತು ಉದ್ಯೋಗದಾತರೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳುವುದಿಲ್ಲ.</li>
+          <li>"ಇನ್ನಷ್ಟು" ಪುಟದಲ್ಲಿ ನಿಮ್ಮ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು ಅಥವಾ ಖಾತೆ ಮತ್ತು ಡೇಟಾವನ್ನು ಅಳಿಸಿ ಒಪ್ಪಿಗೆ ಹಿಂಪಡೆಯಬಹುದು.</li>
+          <li>ರಿಬ್ಲೂಮ್ 18 ವರ್ಷ ಮೇಲ್ಪಟ್ಟವರಿಗೆ ಮಾತ್ರ.</li>
+          <li>ಪ್ರಶ್ನೆ ಅಥವಾ ದೂರುಗಳಿಗೆ ಮೇಲಿನ ಇಮೇಲ್‌ಗೆ ಬರೆಯಿರಿ. 30 ದಿನಗಳಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ. ಭಾರತದ ಡೇಟಾ ಸಂರಕ್ಷಣಾ ಮಂಡಳಿಗೂ ದೂರು ನೀಡಬಹುದು.</li>
+        </ul>
+      </article>
+
+      <article class="card legal" id="legal-terms" hidden>
+        <p class="eyebrow">Last updated 31 October 2026</p>
+        <h1>Terms of Use</h1>
+        <p>These terms apply when you use ReBloom. By ticking the box and signing in, you agree to them. Please also read our <a href="#privacy" data-legal="privacy">Privacy Notice</a>.</p>
+
+        <h2>1. What ReBloom is</h2>
+        <p>ReBloom is a free student project by Team Phoenix Queens, built for the Sahyadri Science Talent Hunt 2026. It gives AI-made suggestions and shows job listings from other websites. It is not a recruitment agency or an employer, and it doesn't promise you a job or interview.</p>
+
+        <h2>2. Who can use it</h2>
+        <p>You must be 18 or older and sign in with your own Google account. Keep your account secure and don't let others use it.</p>
+
+        <h2>3. AI suggestions</h2>
+        <p>Your skills profile, return plan, job match scores and Ask answers are made by an AI model and can be wrong or incomplete. They are general guidance, not legal, medical or financial advice. Check important details yourself, and for legal questions about maternity rights, confirm with your employer's HR or an official source.</p>
+
+        <h2>4. Job listings</h2>
+        <p>Listings come from Adzuna and the employers who post them. We don't check or endorse them. Filters such as work from home or flexible hours only look at what each listing says, so confirm the details with the employer. You apply on the listing's own website. <b>Never pay anyone to get a job or an interview.</b> Real employers don't ask for money. If a listing looks suspicious, don't share personal documents and report it to us.</p>
+
+        <h2>5. Your content</h2>
+        <p>Your story and choices stay yours. You allow us to process them only to provide ReBloom to you, as described in the Privacy Notice. Don't enter other people's personal details or anyone's health information.</p>
+
+        <h2>6. Fair use</h2>
+        <p>Don't misuse ReBloom: no attempts to break or overload it, get around its limits, copy its data in bulk, or use it for anything illegal or harmful. Because it runs on free services, each person has a limited number of AI requests per hour.</p>
+
+        <h2>7. Availability and changes</h2>
+        <p>ReBloom runs on free plans, so it may be slow to start, unavailable at times, or change. If we end the project, we'll delete all profiles. Where we can, we'll give notice first so you can download your data.</p>
+
+        <h2>8. Responsibility</h2>
+        <p>ReBloom is provided as it is, free of charge. As far as the law allows, Team Phoenix Queens is not responsible for decisions you make based on its suggestions or for third-party job listings. Nothing in these terms takes away rights you have under Indian law.</p>
+
+        <h2>9. Ending your use</h2>
+        <p>You can stop using ReBloom and delete your account at any time from <b>More</b>. We may suspend accounts that misuse the service.</p>
+
+        <h2>10. Law</h2>
+        <p>These terms are governed by the laws of India. Courts in Mangaluru, Karnataka have jurisdiction.</p>
+
+        <h2>11. Contact</h2>
+        <p><span class="g-name">Team Phoenix Queens</span>, <span class="g-email">the email shown here once it is set up</span>.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= app pages ================= -->
+  <div id="app" hidden>
+    <!-- Skills -->
+    <section class="page" id="page-skills" data-title="Skills">
+      <div class="page-head"><div><h1 data-i="t1">Skill translator</h1>
+        <p data-i="l1">Write what you handled during your career break. ReBloom turns it into skills employers understand.</p></div>
+        <span class="saved"><i></i><span class="savedTxt"></span></span></div>
+      <div class="tr">
+        <div class="card tr-in">
+          <label for="story" data-i="storyl">Tell us about your career break</label>
+          <p class="quiet small" data-i="storyWarn">Don't include names, phone numbers, addresses or anyone's health details. Your story is sent to our AI provider, Groq, to create your profile.</p>
+          <textarea id="story" maxlength="2000" placeholder="For example: I was an accountant. After my son was born I ran our home budget, organised my brother's wedding and tutored neighbourhood kids…"></textarea>
+          <p class="label" data-i="tryl">Or try an example story</p>
+          <div class="chips">
+            <button class="chip ex" data-s="I was a school teacher. During my 3-year break I tutored my son and five neighbourhood kids, ran our apartment WhatsApp group, and handled a dispute with the builder over water supply.">Teacher, 3 years</button>
+            <button class="chip ex" data-s="I worked in accounts. After my twins were born I ran a small home tiffin business, tracked expenses in Excel, and negotiated prices with vegetable vendors every week.">Accountant, tiffin business</button>
+            <button class="chip ex" data-s="I looked after my elderly father for two years while raising my baby. I booked his doctor visits, handled the paperwork for his pension and managed our family's monthly expenses.">Caregiver, 2 years</button>
+          </div>
+          <div class="row"><button class="btn" id="go" data-i="go">Translate my break</button><button class="btn sec" id="clear" data-i="clear">Clear</button></div>
+        </div>
+        <div class="card tr-out" id="result" aria-live="polite"></div>
+      </div>
+      <div class="next"><button class="btn sec" data-goto="plan"><span data-i="nextPlan">Next: your return plan</span> →</button></div>
+    </section>
+
+    <!-- Plan -->
+    <section class="page" id="page-plan" data-title="Plan" hidden>
+      <div class="page-head"><div><h1 data-i="t2">Return plan</h1>
+        <p data-i="l2">A step-by-step way back to work, based on your child's age and the help you have at home.</p></div>
+        <span class="saved"><i></i><span class="savedTxt"></span></span></div>
+      <div class="plan">
+        <div class="card plan-controls">
+          <div><label for="age" data-i="agel">Child's age</label>
+            <div class="age"><span id="ageOut">8</span><small data-i="months">months</small></div>
+            <input type="range" id="age" min="0" max="36" value="8"></div>
+          <div><label for="care" data-i="carel">Childcare support</label>
+            <select id="care"><option value="family">Family helps at home</option><option value="creche">Creche or daycare nearby</option><option value="none">No regular help yet</option></select></div>
+          <div><label for="goal" data-i="goall">Goal</label>
+            <select id="goal"><option value="full">Full-time role</option><option value="part">Part-time or flexible</option><option value="remote">Fully remote</option></select></div>
+          <button class="btn" id="planBtn" type="button">Build my plan</button>
+          <p class="quiet" id="planNote" aria-live="polite"></p>
+        </div>
+        <div class="plan-right">
+          <div class="card">
+            <div class="head"><h2 data-i="tl">Your timeline</h2><p class="help" data-i="tlh">From birth to 36 months. The marker is your child's age today.</p><p class="plan-sum" id="planSummary"></p></div>
+            <div class="track-plan"><div class="tp-pin" id="tpPin"><b id="tpLabel"></b><i></i></div><div class="tp-bar" id="tpBar"></div>
+              <div class="tp-ticks"><span>0</span><span style="left:16.67%">6</span><span style="left:33.33%">12</span><span style="left:50%">18</span><span style="left:66.67%">24</span><span style="left:83.33%">30</span><span style="left:100%">36 mo</span></div></div>
+            <div class="tp-legend"><span><i class="l-done"></i><span data-i="lgDone">Done</span></span><span><i class="l-now"></i><span data-i="lgNow">Now</span></span><span><i></i><span data-i="lgNext">Coming up</span></span></div>
+          </div>
+          <ol class="steps" id="timeline"></ol>
+        </div>
+      </div>
+      <div class="next"><button class="btn sec" data-goto="jobs"><span data-i="nextJobs">Next: matching jobs</span> →</button></div>
+    </section>
+
+    <!-- Jobs -->
+    <section class="page" id="page-jobs" data-title="Jobs" hidden>
+      <div class="page-head"><div><h1 data-i="t3">Jobs and internships</h1>
+        <p data-i="l3">Real, current listings in India, ranked against your skills.</p></div>
+        <span class="saved"><i></i><span class="savedTxt"></span></span></div>
+      <form class="card job-search" id="jobForm" novalidate>
+        <div class="jfields">
+          <div><label for="jobWhat" data-i="jw">Role or keywords</label><input type="text" id="jobWhat" maxlength="80" placeholder="e.g. accounts executive"></div>
+          <div><label for="jobWhere" data-i="jl">City</label><input type="text" id="jobWhere" maxlength="60" placeholder="e.g. Mangaluru (empty for all India)"></div>
+        </div>
+        <div class="row jrow">
+          <div class="seg" id="kindSeg" role="group" aria-label="Type"><span class="hl"></span><button type="button" id="kJob" aria-pressed="true" data-i="kj">Jobs</button><button type="button" id="kIntern" aria-pressed="false" data-i="ki">Internships</button></div>
+          <button class="btn" id="jobGo" type="submit" data-i="jgo">Search real jobs</button>
+        </div>
+        <div><p class="label" data-i="jf">Only show listings that mention</p>
+          <div class="chips">
+            <button type="button" class="chip jflag" data-f="remote" aria-pressed="false">Work from home</button>
+            <button type="button" class="chip jflag" data-f="parttime" aria-pressed="false">Part-time</button>
+            <button type="button" class="chip jflag" data-f="flexible" aria-pressed="false">Flexible hours</button>
+            <button type="button" class="chip jflag" data-f="returnship" aria-pressed="false">Returnship / career break</button>
+            <button type="button" class="chip jflag" data-f="women" aria-pressed="false">Encourages women</button>
+          </div></div>
+      </form>
+      <p class="quiet" id="jobStatus" aria-live="polite"></p>
+      <div class="jobs" id="jobList"></div>
+      <p class="attrib">Jobs by <a href="https://www.adzuna.in" target="_blank" rel="noopener">Adzuna</a>. Filters only check what each listing says, so confirm details like flexible hours or a creche with the employer.</p>
+    </section>
+
+    <!-- Ask -->
+    <section class="page" id="page-ask" data-title="Ask" hidden>
+      <div class="page-head"><div><h1 data-i="t6">Ask ReBloom</h1>
+        <p data-i="l6">Your guide for going back to work. It can translate your story, build your plan and search real jobs for you.</p></div></div>
+      <div class="card chat">
+        <ul class="chat-log" id="chatLog" aria-live="polite">
+          <li class="ask-empty" id="askEmpty"><span class="m-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg></span>
+            <h2 data-i="a1">How can I help you come back?</h2>
+            <p class="quiet" data-i="a2">Ask anything about returning to work. Try one of these:</p>
+            <div class="chips">
+              <button class="chip sugg">Turn my career break into skills</button>
+              <button class="chip sugg">My baby is 10 months old. When should I start?</button>
+              <button class="chip sugg">Find remote jobs with flexible hours</button>
+              <button class="chip sugg">How do I explain my career gap in an interview?</button>
+              <button class="chip sugg">What are my maternity rights at work in India?</button>
+            </div></li>
+        </ul>
+        <form class="ask-form" id="askForm" novalidate>
+          <label for="askBox" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Message</label>
+          <textarea id="askBox" rows="1" maxlength="2000" placeholder="Message ReBloom…"></textarea>
+          <button class="btn" type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        </form>
+        <p class="ask-foot" id="askFoot" data-i="a3">Answers come from an AI model and can be wrong. Check important details. Chats aren't saved.</p>
+      </div>
+    </section>
+
+    <!-- More -->
+    <section class="page" id="page-more" data-title="More" hidden>
+      <div class="page-head"><div><h1 data-i="t5">More</h1>
+        <p data-i="l5">Your account, what ReBloom will add next, and the team behind it.</p></div></div>
+
+      <div class="card">
+        <div class="profile">
+          <span class="av" id="profAv" aria-hidden="true"></span>
+          <div class="p-txt"><b id="profName"></b><span id="profMode"></span></div>
+          <button class="btn sec" id="signout" data-i="signout">Sign out</button>
+        </div>
+      </div>
+
+      <div class="card" id="rights">
+        <div class="head"><h2 data-i="r1">Your data and rights</h2>
+          <p class="help" data-i="r2">See everything ReBloom holds about you, or delete it. Deleting also withdraws your consent.</p></div>
+        <div class="row">
+          <button class="btn sec" id="dlData" type="button" data-i="r3">Download my data</button>
+          <button class="btn sec danger" id="delAsk" type="button" data-i="r4">Delete my account and data</button>
+        </div>
+        <div class="confirm" id="delConfirm" hidden>
+          <p data-i="r5"><b>Delete everything?</b> This permanently deletes your ReBloom profile (story, skills, plan and searches) and your ReBloom sign-in. It can't be undone.</p>
+          <div class="row"><button class="btn danger-solid" id="delYes" type="button" data-i="r6">Delete everything</button><button class="btn sec" id="delNo" type="button" data-i="r7">Cancel</button></div>
+        </div>
+        <p class="quiet" id="delMsg" aria-live="polite"></p>
+        <p class="quiet small"><a href="#privacy" data-legal="privacy">Privacy Notice</a> · <a href="#terms" data-legal="terms">Terms of Use</a> · <span data-i="r8">Questions or complaints:</span> <span class="g-email">the email shown here once it is set up</span></p>
+      </div>
+
+      <div class="card">
+        <div class="head"><h2 data-i="t4">The full platform</h2>
+          <p class="help" data-i="l4">Planned next: support before leave, during the break and when coming back.</p></div>
+        <div class="stages">
+          <div class="stage"><h3 data-i="g1">Before leave</h3><ul>
+            <li><b>Pre-leave planner</b><span>Plan the handover and pick skills to keep fresh.</span></li>
+            <li><b>Rights in simple language</b><span>Maternity leave, creche and work-from-home rights in Kannada, Hindi or English.</span></li></ul></div>
+          <div class="stage"><h3 data-i="g2">During the break</h3><ul>
+            <li><b>Skill refresh paths</b><span>What changed in your field, and short free courses to catch up.</span></li>
+            <li><b>Mother circles and mentors</b><span>Women in your field who returned after having a baby.</span></li>
+            <li><b>Wellbeing check-in</b><span>One gentle question a week that points to support. It never diagnoses.</span></li></ul></div>
+          <div class="stage"><h3 data-i="g3">Coming back</h3><ul>
+            <li><b>Interview coach</b><span>Practise answering "Why is there a gap?" with confidence.</span></li>
+            <li><b>Paid micro-internships</b><span>Two to four week remote projects for recent experience.</span></li>
+            <li><b>Childcare finder</b><span>Verified creches nearby, and a shared task list at home.</span></li>
+            <li><b>Salary check</b><span>Fair pay for your role, so a gap never means a lower offer.</span></li></ul></div>
+        </div>
+      </div>
+
+      <div class="card closing">
+        <h2><span data-i="c1">She didn't stop working. She stopped getting paid.</span><br><b data-i="c2">ReBloom makes those years count.</b></h2>
+        <div class="team"><svg aria-hidden="true"><use href="#pq"/></svg>
+          <p class="quiet" data-i="team">Built by Team Phoenix Queens for the Sahyadri Science Talent Hunt 2026.</p></div>
+      </div>
+
+      <p class="note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+        <span data-i="priv"><strong>Privacy.</strong> Your story, plan and searches are saved to your private ReBloom profile, which only you can read. Your story goes to Groq's AI (never your name or email) and only your search words go to Adzuna.</span></p>
+    </section>
+  </div>
+</main>
+
+<footer><div class="in">
+  <p class="legal-links"><a href="#privacy" data-legal="privacy">Privacy Notice</a> · <a href="#terms" data-legal="terms">Terms of Use</a></p>
+  <p><b>ReBloom</b> <span data-i="by">by Team Phoenix Queens · Sahyadri Science Talent Hunt 2026</span></p>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const root = document.documentElement;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const motion = !!window.gsap && !reduce;
+const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 2;
+if (window.gsap && lowPower) gsap.ticker.fps(30);
+const ambient = [];
+const syncAmbient = () => ambient.forEach(t => (screen === "welcome" && !document.hidden) ? t.resume() : t.pause());
+document.addEventListener("visibilitychange", () => syncAmbient());
+const store = { get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+                set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+                del(k){ try{ localStorage.removeItem(k); }catch(e){} } };
+
+/* ---------- bloom mark ---------- */
+$("#petals").innerHTML =
+  [36,108,180,252,324].map(r => `<g transform="rotate(${r} 50 50)"><ellipse class="pt back" cx="50" cy="24" rx="13" ry="23"/></g>`).join("") +
+  [0,72,144,216,288].map(r => `<g transform="rotate(${r} 50 50)"><ellipse class="pt" cx="50" cy="27" rx="15" ry="22"/></g>`).join("");
+$("#stamens").innerHTML = [0,60,120,180,240,300].map(r => `<g transform="rotate(${r} 50 50)"><circle cx="50" cy="44" r="1.7"/></g>`).join("");
+
+/* ---------- sliding highlights (switches and tabs) ---------- */
+function slideTo(el, box, instant){
+  if (motion && !instant) gsap.to(el, {...box, duration:.45, ease:"power3.out"});
+  else if (window.gsap) gsap.set(el, box);
+  else Object.assign(el.style, {transform:`translate(${box.x||0}px,${box.y||0}px)`, width:box.width+"px", height:(box.height??3)+"px"});
+}
+function moveHL(seg, instant){
+  const a = seg.querySelector('[aria-pressed="true"]'); if (!a) return;
+  slideTo(seg.querySelector(".hl"), {x:a.offsetLeft, y:a.offsetTop, width:a.offsetWidth, height:a.offsetHeight}, instant);
+}
+function moveTabLine(instant){
+  const a = $('.tab[aria-current="page"]'); if (!a || !a.offsetWidth) return;
+  const phone = matchMedia("(max-width:767px)").matches;
+  const w = phone ? 60 : a.offsetWidth - 16;
+  slideTo($("#tabLine"), {x:a.offsetLeft + (a.offsetWidth - w)/2, width:w}, instant);
+}
+const placeAll = () => { [$("#langSeg"), $("#themeSeg"), $("#kindSeg")].forEach(s => moveHL(s, true)); moveTabLine(true); };
+
+/* ---------- theme ---------- */
+const sysLight = matchMedia("(prefers-color-scheme: light)");
+const effective = () => root.getAttribute("data-theme") || (sysLight.matches ? "light" : "dark");
+function showTheme(instant){ const t = effective();
+  $("#th-light").setAttribute("aria-pressed", t==="light"); $("#th-dark").setAttribute("aria-pressed", t==="dark"); moveHL($("#themeSeg"), instant); }
+function setTheme(t){ root.setAttribute("data-theme", t); store.set("rb-theme", t); showTheme(false); }
+{ const s = store.get("rb-theme"); if (s) root.setAttribute("data-theme", s); }
+$("#th-light").onclick = () => setTheme("light"); $("#th-dark").onclick = () => setTheme("dark");
+sysLight.addEventListener("change", () => showTheme(false));
+
+/* ---------- language ---------- */
+let lang = "en";
+const KN = {
+  light:"ಬೆಳಕು", dark:"ಕತ್ತಲು", signout:"ಸೈನ್ ಔಟ್", back:"ಹಿಂದೆ",
+  tabSkills:"ಕೌಶಲ್ಯ", tabPlan:"ಯೋಜನೆ", tabJobs:"ಉದ್ಯೋಗ", tabMore:"ಇನ್ನಷ್ಟು",
+  presents:"ಟೀಮ್ ಫೀನಿಕ್ಸ್ ಕ್ವೀನ್ಸ್ ಪ್ರಸ್ತುತಪಡಿಸುತ್ತದೆ",
+  tagline:"ತಾಯ್ತನ ಅಂತರವಲ್ಲ. ನಿಮ್ಮ ವೃತ್ತಿ ವಿರಾಮದ ವರ್ಷಗಳನ್ನು ಉದ್ಯೋಗದಾತರು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಕೌಶಲ್ಯಗಳಾಗಿ ಬದಲಾಯಿಸಿ.",
+  start:"ಪ್ರಾರಂಭಿಸಿ", fa1:"ನಿಜವಾದ ಉದ್ಯೋಗಗಳು", fb1:"Adzuna ನಿಂದ ಲೈವ್ ಪಟ್ಟಿಗಳು", fa2:"AI ಮಾರ್ಗದರ್ಶಿ", fb2:"ಉಚಿತ, ಮುಕ್ತ AI ಮಾದರಿಗಳು",
+  fa3:"ಖಾಸಗಿ", fb3:"ನಿಮ್ಮ ಕಥೆ ನಿಮಗೆ ಮಾತ್ರ",
+  si1:"ರಿಬ್ಲೂಮ್‌ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ", si2:"ನಿಮ್ಮ ಕಥೆ, ಮರಳುವ ಯೋಜನೆ ಮತ್ತು ನೀವು ಆರಿಸಿದ ಉದ್ಯೋಗಗಳನ್ನು ಉಳಿಸಲು ನೀವು ಯಾರೆಂದು ನಮಗೆ ತಿಳಿಯಬೇಕು.",
+  si4:"Google ಮೂಲಕ ಮುಂದುವರಿಸಿ", si7:"ನಿಮ್ಮ Google ಹೆಸರು ಮತ್ತು ಫೋಟೋ ಬಳಸುತ್ತೇವೆ. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನಿಮ್ಮ ಖಾಸಗಿ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
+  jw:"ಹುದ್ದೆ ಅಥವಾ ಪದಗಳು", jl:"ನಗರ", kj:"ಉದ್ಯೋಗಗಳು", ki:"ಇಂಟರ್ನ್‌ಶಿಪ್", jgo:"ನಿಜವಾದ ಉದ್ಯೋಗ ಹುಡುಕಿ", jf:"ಪಟ್ಟಿಯಲ್ಲಿ ಇರಬೇಕಾದದ್ದು",
+  planNoteH:"ಯೋಜನೆಯ ಸಾರಾಂಶ",
+  t1:"ಕೌಶಲ್ಯ ಅನುವಾದಕ", l1:"ನಿಮ್ಮ ವೃತ್ತಿ ವಿರಾಮದಲ್ಲಿ ನೀವು ನಿಭಾಯಿಸಿದ್ದನ್ನು ಬರೆಯಿರಿ. ರಿಬ್ಲೂಮ್ ಅದನ್ನು ಉದ್ಯೋಗದಾತರು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಕೌಶಲ್ಯಗಳಾಗಿ ಬದಲಾಯಿಸುತ್ತದೆ.",
+  storyl:"ನಿಮ್ಮ ವೃತ್ತಿ ವಿರಾಮದ ಬಗ್ಗೆ ಹೇಳಿ", tryl:"ಅಥವಾ ಒಂದು ಉದಾಹರಣೆ ಪ್ರಯತ್ನಿಸಿ", go:"ನನ್ನ ವಿರಾಮವನ್ನು ಅನುವಾದಿಸಿ", clear:"ಅಳಿಸಿ",
+  nextPlan:"ಮುಂದೆ: ನಿಮ್ಮ ಮರಳುವ ಯೋಜನೆ", nextJobs:"ಮುಂದೆ: ಹೊಂದುವ ಉದ್ಯೋಗಗಳು",
+  tl:"ನಿಮ್ಮ ಕಾಲರೇಖೆ", tlh:"ಹುಟ್ಟಿನಿಂದ 36 ತಿಂಗಳವರೆಗೆ. ಗುರುತು ನಿಮ್ಮ ಮಗುವಿನ ಇಂದಿನ ವಯಸ್ಸು.", lgDone:"ಮುಗಿದಿದೆ", lgNow:"ಈಗ", lgNext:"ಮುಂದೆ",
+  t2:"ಮರಳುವ ಯೋಜನೆ", l2:"ಮಗುವಿನ ವಯಸ್ಸು ಮತ್ತು ಮನೆಯಲ್ಲಿನ ಸಹಾಯದ ಆಧಾರದ ಮೇಲೆ ಕೆಲಸಕ್ಕೆ ಹಂತ ಹಂತವಾಗಿ ಮರಳುವ ದಾರಿ.",
+  agel:"ಮಗುವಿನ ವಯಸ್ಸು", months:"ತಿಂಗಳು", carel:"ಮಗುವಿನ ಆರೈಕೆ ಸಹಾಯ", goall:"ಗುರಿ",
+  t3:"ಉದ್ಯೋಗ ಮತ್ತು ಇಂಟರ್ನ್‌ಶಿಪ್", l3:"ಭಾರತದ ನಿಜವಾದ, ಪ್ರಸ್ತುತ ಪಟ್ಟಿಗಳು. ನಿಮ್ಮ ಕೌಶಲ್ಯಗಳಿಗೆ ಹೊಂದಿಸಲಾಗಿದೆ.",
+  tabAsk:"ಕೇಳಿ", t6:"ರಿಬ್ಲೂಮ್‌ಗೆ ಕೇಳಿ", l6:"ಕೆಲಸಕ್ಕೆ ಮರಳಲು ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶಿ. ಇದು ನಿಮ್ಮ ಕಥೆ ಓದಬಹುದು, ಯೋಜನೆ ಬದಲಾಯಿಸಬಹುದು ಮತ್ತು ಉದ್ಯೋಗ ಹುಡುಕಬಹುದು.",
+  a1:"ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?", a2:"ಕೆಲಸಕ್ಕೆ ಮರಳುವ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ. ಕನ್ನಡದಲ್ಲೂ ಬರೆಯಬಹುದು.", a3:"ಉತ್ತರಗಳು AI ಮಾದರಿಯಿಂದ ಬರುತ್ತವೆ ಮತ್ತು ತಪ್ಪಾಗಿರಬಹುದು. ಸಂಭಾಷಣೆಗಳನ್ನು ಉಳಿಸುವುದಿಲ್ಲ.",
+  r1:"ನಿಮ್ಮ ಡೇಟಾ ಮತ್ತು ಹಕ್ಕುಗಳು", r2:"ರಿಬ್ಲೂಮ್ ನಿಮ್ಮ ಬಗ್ಗೆ ಹೊಂದಿರುವುದನ್ನು ನೋಡಿ ಅಥವಾ ಅಳಿಸಿ. ಅಳಿಸಿದರೆ ಒಪ್ಪಿಗೆಯೂ ಹಿಂಪಡೆಯಲಾಗುತ್ತದೆ.", r3:"ನನ್ನ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ", r4:"ನನ್ನ ಖಾತೆ ಮತ್ತು ಡೇಟಾ ಅಳಿಸಿ",
+  r5:"<b>ಎಲ್ಲವನ್ನೂ ಅಳಿಸಬೇಕೇ?</b> ನಿಮ್ಮ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್ ಮತ್ತು ಸೈನ್-ಇನ್ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ. ಇದನ್ನು ಹಿಂದಿರುಗಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.", r6:"ಎಲ್ಲವನ್ನೂ ಅಳಿಸಿ", r7:"ರದ್ದುಮಾಡಿ", r8:"ಪ್ರಶ್ನೆ ಅಥವಾ ದೂರುಗಳು:",
+  storyWarn:"ಹೆಸರು, ಫೋನ್ ಸಂಖ್ಯೆ, ವಿಳಾಸ ಅಥವಾ ಯಾರದೇ ಆರೋಗ್ಯ ವಿವರಗಳನ್ನು ಬರೆಯಬೇಡಿ. ನಿಮ್ಮ ಕಥೆಯನ್ನು ಪ್ರೊಫೈಲ್ ರಚಿಸಲು Groq ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.",
+  t5:"ಇನ್ನಷ್ಟು", l5:"ನಿಮ್ಮ ಖಾತೆ, ರಿಬ್ಲೂಮ್ ಮುಂದೆ ಸೇರಿಸುವುದು ಮತ್ತು ಅದರ ಹಿಂದಿನ ತಂಡ.",
+  t4:"ಸಂಪೂರ್ಣ ವೇದಿಕೆ", l4:"ಮುಂದಿನ ಯೋಜನೆ: ರಜೆಗೆ ಮೊದಲು, ವಿರಾಮದ ಸಮಯದಲ್ಲಿ ಮತ್ತು ಮರಳುವಾಗ ಬೆಂಬಲ.",
+  g1:"ರಜೆಗೆ ಮೊದಲು", g2:"ವಿರಾಮದ ಸಮಯದಲ್ಲಿ", g3:"ಮರಳುವಾಗ",
+  c1:"ಅವಳು ಕೆಲಸ ನಿಲ್ಲಿಸಲಿಲ್ಲ. ಸಂಬಳ ಮಾತ್ರ ನಿಂತಿತು.", c2:"ರಿಬ್ಲೂಮ್ ಆ ವರ್ಷಗಳನ್ನು ಲೆಕ್ಕಕ್ಕೆ ತರುತ್ತದೆ.",
+  team:"ಸಹ್ಯಾದ್ರಿ ಸೈನ್ಸ್ ಟ್ಯಾಲೆಂಟ್ ಹಂಟ್ 2026ಕ್ಕಾಗಿ ಫೀನಿಕ್ಸ್ ಕ್ವೀನ್ಸ್ ತಂಡ ನಿರ್ಮಿಸಿದೆ.",
+  by:"· ಫೀನಿಕ್ಸ್ ಕ್ವೀನ್ಸ್ ತಂಡ · ಸಹ್ಯಾದ್ರಿ ಸೈನ್ಸ್ ಟ್ಯಾಲೆಂಟ್ ಹಂಟ್ 2026",
+  priv:"<strong>ಗೌಪ್ಯತೆ.</strong> ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನಿಮ್ಮ ಖಾಸಗಿ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ. ನಿಮ್ಮ ಕಥೆ Groq ನ AI ಗೆ ಹೋಗುತ್ತದೆ (ಹೆಸರು ಅಥವಾ ಇಮೇಲ್ ಅಲ್ಲ)."
+};
+const T = {
+  en:{hi:n=>`Hi, ${n}`, welcomeBack:n=>`Welcome back, ${n}. Your story and plan are where you left them.`, cont:n=>`Continue as ${n}`,
+      acctMode:"Signed in with Google", savedAcct:"Saved to your account", saving:"Saving…", saveFail:"Couldn't save. Check your connection.",
+      planBuild:"Build my plan", planUpdate:"Update my plan", planBusy:"Building your plan…", here:"You are here",
+      planChanged:"Your childcare or goal changed. Update to rebuild the plan.",
+      planEmpty:"Set your child's age, childcare and goal, then press Build my plan. The AI builds a plan around your skills and situation.",
+      jobsEmpty:"Search real, current job and internship listings in India. If you've translated your story, the AI ranks them against your skills."},
+  kn:{hi:n=>`ನಮಸ್ಕಾರ, ${n}`, welcomeBack:n=>`ಮತ್ತೆ ಸ್ವಾಗತ, ${n}. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನೀವು ಬಿಟ್ಟಲ್ಲೇ ಇವೆ.`, cont:n=>`${n} ಆಗಿ ಮುಂದುವರಿಸಿ`,
+      acctMode:"Google ಮೂಲಕ ಸೈನ್ ಇನ್", savedAcct:"ನಿಮ್ಮ ಖಾತೆಯಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ", saving:"ಉಳಿಸಲಾಗುತ್ತಿದೆ…", saveFail:"ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+      planBuild:"ನನ್ನ ಯೋಜನೆ ರಚಿಸಿ", planUpdate:"ಯೋಜನೆ ನವೀಕರಿಸಿ", planBusy:"ಯೋಜನೆ ರಚಿಸಲಾಗುತ್ತಿದೆ…", here:"ನೀವು ಇಲ್ಲಿದ್ದೀರಿ",
+      planChanged:"ಆರೈಕೆ ಅಥವಾ ಗುರಿ ಬದಲಾಗಿದೆ. ಯೋಜನೆ ನವೀಕರಿಸಿ.",
+      planEmpty:"ಮಗುವಿನ ವಯಸ್ಸು, ಆರೈಕೆ ಮತ್ತು ಗುರಿ ಆರಿಸಿ, ನಂತರ 'ನನ್ನ ಯೋಜನೆ ರಚಿಸಿ' ಒತ್ತಿ.",
+      jobsEmpty:"ಭಾರತದಲ್ಲಿನ ನಿಜವಾದ ಉದ್ಯೋಗ ಮತ್ತು ಇಂಟರ್ನ್‌ಶಿಪ್‌ಗಳನ್ನು ಹುಡುಕಿ."}
+};
+const EN = {}; $$("[data-i]").forEach(el => EN[el.dataset.i] = el.innerHTML);
+/* headings rise word by word out of a hidden line */
+const esc = t => t.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+function splitWords(el){ el.innerHTML = el.textContent.trim().split(/\s+/).map(w => `<span class="sw"><i>${esc(w)}</i></span>`).join(" "); }
+const splitAll = () => $$(".page-head h1, #signin h2").forEach(splitWords);
+function setLang(l){
+  lang = l;
+  $$("[data-i]").forEach(el => { const k = el.dataset.i; el.innerHTML = (l==="kn" && KN[k]) ? KN[k] : EN[k]; });
+  splitAll();
+  $("#lang-kn").setAttribute("aria-pressed", l==="kn"); $("#lang-en").setAttribute("aria-pressed", l==="en");
+  root.lang = l; moveHL($("#langSeg")); moveHL($("#themeSeg"), true); moveHL($("#kindSeg"), true); moveTabLine(true); paintWho(); paintSaved(); renderPlan(); renderJobs();
+}
+$("#lang-kn").onclick = () => setLang("kn"); $("#lang-en").onclick = () => setLang("en");
+root.lang = "en";
+
+/* ---------- screens and pages ---------- */
+const PAGES = ["skills","plan","jobs","ask","more"];
+const startHash = location.hash.slice(1);
+let page = "skills";
+function toTop(){ scrollTo(0, 0); }
+const SCREENS = {welcome:"#welcome", signin:"#signin", app:"#app", legal:"#legal"};
+let screen = "welcome";
+const BLUR = lowPower ? "blur(0px)" : "blur(8px)";
+function enterKids(el, dir, delay = 0){
+  if (!motion) return;
+  const kids = el.id === "welcome" ? el.querySelectorAll(".w-copy > *:not(.w-title), .w-visual")
+             : el.id === "app" ? $("#page-" + page).children
+             : el.id === "signin" ? el.querySelectorAll(".back, .card > *") : el.children;
+  const host = el.id === "app" ? $("#page-" + page) : el;
+  gsap.fromTo(kids, {opacity:0, y:24, filter:BLUR}, {opacity:1, y:0, filter:"blur(0px)", duration:.75, stagger:.06, delay, ease:"power3.out", clearProps:"opacity,transform,filter"});
+  gsap.fromTo(host.querySelectorAll(".sw > i"), {yPercent:115}, {yPercent:0, duration:.9, stagger:.045, delay:delay + .05, ease:"power4.out", clearProps:"transform"});
+}
+/* screens: a full-screen panel sweeps across, the new screen comes into focus behind it */
+let curtainTl = null;
+function showScreen(sc, dir = 1){
+  if (sc === screen) return;
+  const old = $(SCREENS[screen]), nu = $(SCREENS[sc]); screen = sc;
+  const swapNow = () => { old.hidden = true; nu.hidden = false; document.body.dataset.screen = sc; syncAmbient(); toTop(); requestAnimationFrame(() => moveTabLine(true)); };
+  if (!motion) return swapNow();
+  if (curtainTl) curtainTl.progress(1);
+  const c = $("#curtain");
+  curtainTl = gsap.timeline({onComplete:() => { curtainTl = null; gsap.set(c, {yPercent:100}); }})
+    .fromTo(c, {yPercent: dir > 0 ? 100 : -100}, {yPercent:0, duration:.6, ease:"power4.inOut"})
+    .fromTo(".curtain-word", {opacity:0, letterSpacing:".6em"}, {opacity:1, letterSpacing:".35em", duration:.45, ease:"power2.out"}, "-=.25")
+    .add(() => { swapNow(); enterKids(nu, dir, .3); })
+    .to(".curtain-word", {opacity:0, duration:.2}, "+=.05")
+    .to(c, {yPercent: dir > 0 ? -100 : 100, duration:.65, ease:"power4.inOut"}, "<");
+}
+/* pages: the old page blurs away, the new one rises into focus */
+let pageTl = null;
+function swapPage(oldEl, newEl, dir){
+  if (pageTl) pageTl.progress(1);
+  const done = () => { oldEl.hidden = true; if (window.gsap) gsap.set(oldEl, {clearProps:"opacity,transform,filter"}); newEl.hidden = false; toTop(); enterKids($("#app"), dir); };
+  if (!motion) return done();
+  pageTl = gsap.timeline({onComplete:() => pageTl = null})
+    .to(oldEl, {opacity:0, y:-12, filter: lowPower ? "blur(0px)" : "blur(6px)", duration:.22, ease:"power2.in"})
+    .add(done);
+}
+function goPage(p, instant){
+  if (!PAGES.includes(p)) p = "skills";
+  const oldP = page, dir = Math.sign(PAGES.indexOf(p) - PAGES.indexOf(oldP)) || 1;
+  page = p;
+  $$(".tab").forEach(t => t.dataset.page === p ? t.setAttribute("aria-current","page") : t.removeAttribute("aria-current"));
+  if (screen === "app") { try { history.replaceState(null, "", "#" + p); } catch(e) {} }
+  moveTabLine(instant);
+  if (instant || oldP === p || $("#app").hidden) { PAGES.forEach(x => $("#page-"+x).hidden = x !== p); return; }
+  swapPage($("#page-"+oldP), $("#page-"+p), dir);
+}
+function toast(msg){
+  const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role","status");
+  t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span>';
+  t.querySelector("span").textContent = msg; document.body.appendChild(t);
+  if (motion) gsap.fromTo(t, {opacity:0, y:16, xPercent:-50, x:0}, {opacity:1, y:0, duration:.35, ease:"back.out(1.6)"});
+  setTimeout(() => motion ? gsap.to(t, {opacity:0, y:10, duration:.25, onComplete:() => t.remove()}) : t.remove(), 2400);
+}
+$$(".tab").forEach(t => t.onclick = () => goPage(t.dataset.page));
+$$("[data-goto]").forEach(b => b.onclick = () => goPage(b.dataset.goto));
+$("#home").onclick = () => showScreen("welcome", -1);
+$("#backHome").onclick = () => showScreen("welcome", -1);
+$("#startBtn").onclick = () => {
+  if (session) { showScreen("app"); goPage(page, true); }
+  else { showScreen("signin"); setTimeout(() => $("#googleBtn").focus({preventScroll:true}), 300); }
+};
+
+/* ---------- server calls + sign-in (Google via Firebase) ---------- */
+let session = null, fbAuth = null, fbDb = null, savedMode = "", pendingSignIn = false;
+let skillsData = null, planData = null, jobsData = null;   // real results from the APIs
+const initials = n => (n || "?").trim().charAt(0).toUpperCase();
+function avatarInto(sel){
+  const el = $(sel);
+  if (session && session.photo) {
+    if (el.tagName !== "IMG") { const img = document.createElement("img"); img.id = el.id; img.alt = ""; img.referrerPolicy = "no-referrer"; el.replaceWith(img); }
+    $(sel).src = session.photo;
+  } else {
+    if (el.tagName === "IMG") { const s = document.createElement("span"); s.id = el.id; s.className = "av"; s.setAttribute("aria-hidden","true"); el.replaceWith(s); }
+    $(sel).textContent = initials(session ? session.name : "");
+  }
+}
+function paintWho(){
+  const greet = $("#greet");
+  if (!session) { $("#who").hidden = true; greet.hidden = true; return; }
+  $("#who").hidden = false; avatarInto("#whoAv"); $("#whoName").textContent = T[lang].hi(session.name);
+  avatarInto("#profAv"); $("#profName").textContent = session.full || session.name;
+  $("#profMode").textContent = session.email ? `${T[lang].acctMode} · ${session.email}` : T[lang].acctMode;
+  greet.hidden = !session.back; if (session.back) greet.textContent = T[lang].welcomeBack(session.name);
+}
+function paintSaved(){ $$(".savedTxt").forEach(s => s.textContent = savedMode ? T[lang][savedMode] : ""); $$(".saved").forEach(s => s.hidden = !savedMode); }
+
+async function api(path, payload, signal){
+  if (!fbAuth || !fbAuth.currentUser) throw {error:"signed_out", message:"Please sign in again."};
+  const token = await fbAuth.currentUser.getIdToken();
+  let r;
+  try { r = await fetch(path, {method:"POST", headers:{"Content-Type":"application/json", Authorization:"Bearer " + token}, body:JSON.stringify({...payload, lang}), signal}); }
+  catch(e) { if (e && e.name === "AbortError") throw {error:"cancelled"}; throw {error:"offline", message:"Couldn't reach ReBloom. Check your internet connection."}; }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw {error:data.error || "server", message:data.message || "Something went wrong. Try again."};
+  return data;
+}
+const errBox = e => e && e.error === "cancelled" ? "" :
+  `<p class="note err"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg><span>${esc((e && e.message) || "Something went wrong. Try again.")}</span></p>`;
+
+function signinError(m){ const el = $("#signErr"); el.textContent = m || ""; el.hidden = !m; }
+const authMsg = e => ({ "auth/popup-closed-by-user":"", "auth/cancelled-popup-request":"",
+  "auth/unauthorized-domain":"This website isn't on the Firebase sign-in list yet. Add it in Firebase under Authentication, Settings, Authorized domains.",
+  "auth/network-request-failed":"No internet connection. Try again." })[e && e.code] ?? "Sign-in didn't work. Try again.";
+async function initFirebase(){
+  let cfg;
+  try { cfg = await (await fetch("/api/config")).json(); } catch(e) { return signinError("Couldn't reach the ReBloom server."); }
+  showContact(cfg.grievance);
+  if (!window.firebase || !cfg.firebase || !cfg.firebase.apiKey) return signinError("Sign-in isn't set up yet. Add the Firebase settings on the server.");
+  firebase.initializeApp(cfg.firebase); fbAuth = firebase.auth(); fbDb = firebase.firestore();
+  fbAuth.getRedirectResult().catch(e => signinError(authMsg(e)));
+  fbAuth.onAuthStateChanged(onUser);
+}
+$("#googleBtn").onclick = async () => {
+  if (!fbAuth) return; signinError(""); pendingSignIn = true;
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try { await fbAuth.signInWithPopup(provider); }
+  catch(e) {
+    if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") { store.set("rb-pending", 1); return fbAuth.signInWithRedirect(provider); }
+    pendingSignIn = false; signinError(authMsg(e));
+  }
+};
+async function onUser(user){
+  if (!user) {
+    const was = !!session; session = null; skillsData = planData = jobsData = null; savedMode = "";
+    paintWho(); paintSaved(); renderSkills(); renderPlan(); renderJobs();
+    if (was || screen === "app") showScreen("welcome", -1);
+    return;
+  }
+  const fresh = pendingSignIn || !!store.get("rb-pending"); store.del("rb-pending"); pendingSignIn = false;
+  session = { uid:user.uid, full:user.displayName || "", name:(user.displayName || user.email || "there").split(/[\s@]/)[0], photo:user.photoURL, email:user.email, back:!fresh };
+  paintWho();
+  await loadProfile();
+  if (fresh) {
+    consentRec = { version:CONSENT_VERSION, at:Date.now(), age18:true };
+    save(); showScreen("app"); goPage("skills", true); toast(T[lang].hi(session.name));
+    return;
+  }
+  if (!consentRec || consentRec.version !== CONSENT_VERSION) {     // no consent on record: ask again before using her data
+    session = null; paintWho(); await fbAuth.signOut();
+    signinError("Please read the Privacy Notice and tick the box to continue.");
+    return;
+  }
+  else if (PAGES.includes(startHash)) { showScreen("app"); goPage(startHash, true); }
+}
+$("#signout").onclick = () => fbAuth && fbAuth.signOut();
+
+/* ---------- consent, privacy notice, terms, and data rights (DPDP Act) ---------- */
+$("#consentBox").addEventListener("change", e => { $("#googleBtn").disabled = !e.target.checked; });
+let legalFrom = "welcome";
+function openLegal(which){
+  $("#legal-privacy").hidden = which !== "privacy"; $("#legal-terms").hidden = which !== "terms";
+  if (screen !== "legal") { legalFrom = screen; showScreen("legal"); } else toTop();
+  try { history.replaceState(null, "", "#" + which); } catch(e) {}
+}
+document.addEventListener("click", e => { const a = e.target.closest("[data-legal]"); if (!a) return; e.preventDefault(); openLegal(a.dataset.legal); });
+$("#legalBack").onclick = () => { try { history.replaceState(null, "", screen === "legal" && legalFrom === "app" ? "#" + page : "#"); } catch(e) {} showScreen(legalFrom, -1); };
+function showContact(g){
+  const email = g && g.email;
+  $$(".g-email").forEach(el => { el.innerHTML = email ? `<a href="mailto:${esc(email)}">${esc(email)}</a>` : "the contact email (to be added by the team)"; });
+  $$(".g-name").forEach(el => { if (g && g.name) el.textContent = g.name; });
+}
+$("#dlData").onclick = async () => {
+  if (!session) return;
+  let saved = {};
+  try { const snap = await userDoc().get(); saved = snap.exists ? snap.data() : {}; } catch(e) { saved = currentState(); }
+  const file = { downloaded_at:new Date().toISOString(), account:{ name:session.full, email:session.email, photo:session.photo, id:session.uid }, profile:saved,
+    note:"This is everything ReBloom stores about you. Chat messages are not stored." };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(file, null, 2)], {type:"application/json"}));
+  a.download = "rebloom-my-data.json"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+$("#delAsk").onclick = () => { $("#delConfirm").hidden = false; $("#delYes").focus(); };
+$("#delNo").onclick = () => { $("#delConfirm").hidden = true; };
+$("#delYes").onclick = async () => {
+  const msg = $("#delMsg"); const btn = $("#delYes"); btn.disabled = true; msg.textContent = "Deleting…";
+  try {
+    clearTimeout(saveTimer); session.deleting = true;
+    await userDoc().delete();
+    try { await fbAuth.currentUser.delete(); }
+    catch(e) {
+      if (e.code !== "auth/requires-recent-login") throw e;
+      await fbAuth.currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());   // Google asks her to confirm it's her
+      await fbAuth.currentUser.delete();
+    }
+    ["rb-theme","rb-pending"].forEach(k => store.del(k));
+    $("#delConfirm").hidden = true; msg.textContent = "";
+    toast("Your account and data were deleted");
+  } catch(e) {
+    session && (session.deleting = false);
+    msg.textContent = "Couldn't finish deleting. Your profile may already be gone; try again, or email us and we'll delete it for you.";
+  } finally { btn.disabled = false; }
+};
+
+/* ---------- each person's saved profile (Firestore: users/{uid}) ---------- */
+const userDoc = () => fbDb.collection("users").doc(session.uid);
+const CONSENT_VERSION = "2026-10-31";
+let consentRec = null;
+function currentState(){
+  return { consent:consentRec, story:$("#story").value, skills:skillsData, plan:planData,
+    inputs:{ age:+$("#age").value, care:$("#care").value, goal:$("#goal").value }, jobQuery:jobQuery(), updatedAt:Date.now() };
+}
+function applyState(s){
+  $("#story").value = typeof s.story === "string" ? s.story : "";
+  const i = s.inputs || {};
+  if (typeof i.age === "number") $("#age").value = i.age;
+  if (i.care) $("#care").value = i.care;
+  if (i.goal) $("#goal").value = i.goal;
+  skillsData = s.skills || null; planData = s.plan || null; jobsData = null; consentRec = s.consent || consentRec;
+  setJobQuery(s.jobQuery || {});
+  renderSkills(); renderPlan(); renderJobs();
+}
+async function loadProfile(){
+  try { const snap = await userDoc().get(); applyState(snap.exists ? snap.data() : {}); savedMode = "savedAcct"; }
+  catch(e) { applyState({}); savedMode = "saveFail"; }
+  paintSaved();
+}
+let saveTimer = null, saving = false, again = false;
+function queueSave(){ if (!session || !fbDb || session.deleting) return; clearTimeout(saveTimer); saveTimer = setTimeout(save, 900); }
+async function save(){
+  if (saving) { again = true; return; }
+  saving = true; savedMode = "saving"; paintSaved();
+  try { await userDoc().set(JSON.parse(JSON.stringify(currentState()))); savedMode = "savedAcct"; }
+  catch(e) { savedMode = "saveFail"; }
+  saving = false; paintSaved();
+  if (again) { again = false; save(); }
+}
+
+/* ---------- skills (Groq) ---------- */
+const AREAS = ["Finance & budgeting","Operations & coordination","Project & event management","Negotiation","Teaching & training",
+  "Business & sales","Communication & community","Planning & organisation","Care & wellbeing","Leadership"];
+const bloomSVG = (areas, label) => `<svg class="bloom-svg" viewBox="0 0 100 100" aria-hidden="true">${AREAS.map((a,i) =>
+  `<g transform="rotate(${i*36} 50 50)"><ellipse class="bp${areas.includes(a) ? " on" : ""}" cx="50" cy="25" rx="8" ry="18.5"/></g>`).join("")}
+  <circle cx="50" cy="50" r="13" class="bcc"/><text x="50" y="55" text-anchor="middle" class="bc-t">${label}</text></svg>`;
+function renderSkills(anim){
+  const out = $("#result"), d = skillsData;
+  if (!d) { out.innerHTML = `<div class="bloom-chart">${bloomSVG([], 0)}<div><h2 class="tr-title">Your skills profile</h2><p class="quiet">Write a few lines about your break, then press Translate. The AI reads your story and each skill area you show fills a petal.</p></div></div>`; return; }
+  const skills = d.skills || [];
+  if (!skills.length) { out.innerHTML = `<div class="bloom-chart">${bloomSVG([], 0)}<div><h2 class="tr-title">No skills found yet</h2><p class="quiet">Add specifics: what you planned, managed, paid for or organised.</p></div></div>`; return; }
+  const areas = [...new Set(skills.map(s => s.area))], roles = d.suggested_roles || [];
+  out.innerHTML = `<div class="bloom-chart">${bloomSVG(areas, skills.length)}<div>
+      ${d.previous_role ? `<p class="tr-role">Previous role: ${esc(d.previous_role)}</p>` : ""}
+      <h2 class="tr-title">${esc(d.break_title || "Career break")}${d.break_years ? `, ${esc(d.break_years)}` : ""}</h2>
+      <p class="quiet">${skills.length} skills across ${areas.length} areas</p></div></div>
+    ${d.summary ? `<div class="cv"><p>${esc(d.summary)}</p><button class="chip" type="button" id="copyCv">Copy for my CV</button></div>` : ""}
+    <ul class="skills">${skills.map(s => `<li><span class="badge">${esc(s.area)}</span><b>${esc(s.skill)}</b><span class="why">${esc(s.evidence)}</span></li>`).join("")}</ul>
+    ${roles.length ? `<p class="label">Search jobs for</p><div class="chips">${roles.map(r => `<button class="chip role" type="button">${esc(r)}</button>`).join("")}</div>` : ""}`;
+  const copy = $("#copyCv");
+  if (copy) copy.onclick = async () => { try { await navigator.clipboard.writeText(d.summary); copy.textContent = "Copied"; } catch(e) { copy.textContent = "Select the text to copy"; } };
+  out.querySelectorAll(".role").forEach(b => b.onclick = () => { $("#jobWhat").value = b.textContent; goPage("jobs"); searchJobs(); });
+  if (motion && anim) {
+    gsap.from(out.querySelectorAll(".bp.on"), {scale:0, duration:.6, stagger:.08, ease:"back.out(1.7)"});
+    gsap.from(out.querySelectorAll(".bloom-chart > div > *, .cv, .skills li, .chips"), {opacity:0, y:10, duration:.4, stagger:.05, delay:.15, ease:"power2.out", clearProps:"opacity,transform"});
+  }
+}
+const SKEL = `<div class="skel" role="status" aria-label="Working"><div class="bloom-chart"><span class="sk-c"></span><div class="skel"><i style="width:45%"></i><i style="width:85%"></i><i style="width:60%"></i></div></div><i></i><i style="width:90%"></i><i style="width:70%"></i><i style="width:80%"></i></div>`;
+async function translate(){
+  const story = $("#story").value.trim();
+  if (!story) { $("#story").focus(); return; }
+  const btn = $("#go"); btn.disabled = true; $("#result").innerHTML = SKEL;
+  try { skillsData = await api("/api/translate", {story}); renderSkills(true); queueSave(); }
+  catch(e) { $("#result").innerHTML = errBox(e); }
+  finally { btn.disabled = false; }
+}
+$("#go").onclick = translate;
+$("#clear").onclick = () => { $("#story").value = ""; skillsData = null; renderSkills(); queueSave(); $("#story").focus(); };
+$("#story").addEventListener("input", queueSave);
+$$(".ex").forEach(c => c.onclick = () => { $("#story").value = c.dataset.s; translate(); });
+
+/* ---------- return plan (Groq) ---------- */
+const planInputs = () => ({ age:+$("#age").value, care:$("#care").value, goal:$("#goal").value });
+function renderPlan(anim){
+  const a = +$("#age").value, d = planData; $("#ageOut").textContent = a;
+  const pct = a / 36 * 100; $("#tpPin").style.left = pct + "%";
+  $("#tpLabel").textContent = a + " mo"; $("#tpLabel").style.transform = `translateX(${pct < 8 ? -10 : pct > 92 ? -90 : -50}%)`;
+  const changed = d && d.inputs && (d.inputs.care !== $("#care").value || d.inputs.goal !== $("#goal").value);
+  $("#planBtn").textContent = d ? T[lang].planUpdate : T[lang].planBuild;
+  $("#planNote").textContent = changed ? T[lang].planChanged : "";
+  $("#planSummary").textContent = d ? (d.summary || "") : "";
+  if (!d || !(d.phases || []).length) {
+    $("#tpBar").innerHTML = '<span class="tp-seg" style="flex:1 1 0"></span>';
+    $("#timeline").innerHTML = `<li class="plan-empty"><p class="quiet">${T[lang].planEmpty}</p></li>`;
+    return;
+  }
+  const ph = [...d.phases].sort((x, y) => x.start_month - y.start_month);
+  const status = p => (p.end_month != null && a >= p.end_month) ? "done" : (a >= p.start_month && (p.end_month == null || a < p.end_month)) ? "now" : "";
+  $("#tpBar").innerHTML = ph.map(p => { const f = Math.max(0, Math.min(36, p.start_month)), t = Math.min(36, p.end_month == null ? 36 : p.end_month), w = t - f;
+    return w > 0 ? `<span class="tp-seg ${status(p)}" style="flex:${w} 1 0" title="${esc(p.title)}"></span>` : ""; }).join("");
+  $("#timeline").innerHTML = ph.map((p,i) => { const st = status(p);
+    const when = p.end_month == null ? `${p.start_month}+ months` : `${p.start_month}–${p.end_month} months`;
+    return `<li class="step ${st}"><span class="box" aria-hidden="true">${st === "done" ? "✓" : i+1}</span><div>
+      <span class="when">${when}</span><h3>${esc(p.title)}${st === "now" ? `<span class="badge">${T[lang].here}</span>` : ""}</h3>
+      <ul class="acts">${(p.actions || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>${p.tip ? `<p class="tip"><b>Tip:</b> ${esc(p.tip)}</p>` : ""}</div></li>`; }).join("");
+  if (motion && anim) gsap.from("#timeline .step", {opacity:0, y:12, duration:.45, stagger:.07, ease:"power2.out", clearProps:"opacity,transform"});
+}
+async function buildPlan(){
+  const btn = $("#planBtn"); btn.disabled = true; btn.textContent = T[lang].planBusy;
+  $("#timeline").innerHTML = `<li><div class="skel"><i></i><i style="width:85%"></i><i style="width:70%"></i><i></i><i style="width:60%"></i></div></li>`;
+  try {
+    const r = await api("/api/plan", { child_age_months:+$("#age").value, childcare:$("#care").value, goal:$("#goal").value,
+      skills:(skillsData && skillsData.skills || []).map(s => s.skill), roles:(skillsData && skillsData.suggested_roles) || [], story:$("#story").value });
+    planData = {...r, inputs:planInputs()}; renderPlan(true); queueSave();
+  } catch(e) { renderPlan(); $("#timeline").insertAdjacentHTML("afterbegin", `<li>${errBox(e)}</li>`); }
+  finally { btn.disabled = false; $("#planBtn").textContent = planData ? T[lang].planUpdate : T[lang].planBuild; }
+}
+$("#planBtn").onclick = buildPlan;
+$("#age").addEventListener("input", () => renderPlan());
+["care","goal"].forEach(id => $("#"+id).addEventListener("input", () => renderPlan()));
+["age","care","goal"].forEach(id => $("#"+id).addEventListener("change", queueSave));
+
+/* ---------- real jobs and internships (Adzuna, ranked by Groq) ---------- */
+let jobKind = "job";
+const jobFlags = new Set();
+const FLAG_LABEL = {remote:"Work from home", parttime:"Part-time", flexible:"Flexible hours", returnship:"Returnship / career break", women:"Encourages women", childcare:"Mentions childcare"};
+const jobQuery = () => ({ what:$("#jobWhat").value.trim(), where:$("#jobWhere").value.trim(), kind:jobKind, flags:[...jobFlags] });
+function setKind(k){ jobKind = k === "internship" ? "internship" : "job";
+  $("#kJob").setAttribute("aria-pressed", jobKind === "job"); $("#kIntern").setAttribute("aria-pressed", jobKind === "internship"); moveHL($("#kindSeg")); }
+function setJobQuery(q){
+  $("#jobWhat").value = q.what || ""; $("#jobWhere").value = q.where || ""; setKind(q.kind);
+  jobFlags.clear(); (q.flags || []).forEach(f => FLAG_LABEL[f] && jobFlags.add(f));
+  $$(".jflag").forEach(b => b.setAttribute("aria-pressed", jobFlags.has(b.dataset.f)));
+}
+$("#kJob").onclick = () => { setKind("job"); queueSave(); };
+$("#kIntern").onclick = () => { setKind("internship"); queueSave(); };
+$$(".jflag").forEach(b => b.onclick = () => { const f = b.dataset.f; jobFlags.has(f) ? jobFlags.delete(f) : jobFlags.add(f); b.setAttribute("aria-pressed", jobFlags.has(f)); queueSave(); });
+const shown = {};
+const money = n => "₹" + Math.round(n).toLocaleString("en-IN");
+function posted(iso){ const d = Math.floor((Date.now() - Date.parse(iso)) / 864e5); return isNaN(d) ? "" : d <= 0 ? "Posted today" : d === 1 ? "Posted yesterday" : `Posted ${d} days ago`; }
+const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : null;
+function renderJobs(anim){
+  const el = $("#jobList"), st = $("#jobStatus");
+  if (!jobsData) {
+    st.textContent = "";
+    el.innerHTML = `<p class="quiet jobs-empty">${T[lang].jobsEmpty}</p>`; return;
+  }
+  const q = jobsData.query || {}, jobs = jobsData.jobs || [];
+  st.textContent = jobs.length ? `${jobs.length} shown of ${jobsData.total_found} ${q.kind === "internship" ? "internships" : "jobs"} found for “${q.what}”${q.where ? " in " + q.where : " in India"}`
+                               : `No listings matched “${q.what}”${q.where ? " in " + q.where : ""}${(q.flags || []).length ? " with those filters" : ""}. Try fewer filters or a broader role.`;
+  el.innerHTML = jobs.map(j => { const url = safeUrl(j.url), has = j.match != null;
+    const sal = j.salary_min ? (j.salary_max && j.salary_max !== j.salary_min ? `${money(j.salary_min)}–${money(j.salary_max)} a year` : `${money(j.salary_min)} a year`) : "";
+    return `<article class="job">
+    <div class="job-top"><div style="min-width:0"><h3>${esc(j.title)}</h3><p class="co">${esc([j.company, j.location].filter(Boolean).join(" · "))}</p></div>
+      ${has ? `<div class="ring-m" role="img" aria-label="${j.match}% skill match"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="rb" cx="22" cy="22" r="19"/>
+        <circle class="rf" cx="22" cy="22" r="19" pathLength="100" style="stroke-dasharray:${shown[j.id] ?? 0} 100"/></svg><b data-v="${j.match}" data-k="${esc(j.id)}">${shown[j.id] ?? 0}%</b></div>` : ""}</div>
+    ${j.why ? `<p class="mlabel">${esc(j.why)}</p>` : ""}
+    <p class="jmeta">${esc([posted(j.created), sal].filter(Boolean).join(" · "))}</p>
+    ${(j.flags || []).length ? `<div class="policies">${j.flags.map(f => `<span class="badge">${esc(FLAG_LABEL[f] || f)}</span>`).join("")}</div>` : ""}
+    ${j.snippet ? `<p class="snip">${esc(j.snippet)}…</p>` : ""}
+    ${url ? `<a class="btn sec apply" href="${esc(url)}" target="_blank" rel="noopener noreferrer">View and apply →</a>` : ""}</article>`; }).join("");
+  el.querySelectorAll(".ring-m b").forEach(b => {
+    const rf = b.parentNode.querySelector(".rf"), k = b.dataset.k, v = +b.dataset.v;
+    const setv = n => { b.textContent = Math.round(n) + "%"; rf.style.strokeDasharray = `${n} 100`; };
+    const from = shown[k] ?? 0; shown[k] = v;
+    if (!motion) return setv(v);
+    const o = {n:from}; gsap.to(o, {n:v, duration:.9, ease:"power2.out", onUpdate:() => setv(o.n)});
+  });
+  if (motion && anim) gsap.from(el.querySelectorAll(".job"), {opacity:0, y:14, duration:.4, stagger:.05, ease:"power2.out", clearProps:"opacity,transform"});
+}
+async function searchJobs(){
+  const q = jobQuery();
+  if (!q.what) { $("#jobWhat").focus(); return; }
+  const btn = $("#jobGo"); btn.disabled = true;
+  $("#jobStatus").textContent = "Searching live listings…";
+  $("#jobList").innerHTML = Array.from({length:3}, () => `<article class="job"><div class="skel"><i style="width:70%"></i><i style="width:45%"></i><i></i><i style="width:85%"></i></div></article>`).join("");
+  try { jobsData = await api("/api/jobs", {...q, skills:(skillsData && skillsData.skills || []).map(s => s.skill)}); renderJobs(true); queueSave(); }
+  catch(e) { $("#jobStatus").textContent = ""; $("#jobList").innerHTML = errBox(e); }
+  finally { btn.disabled = false; }
+}
+$("#jobForm").addEventListener("submit", e => { e.preventDefault(); searchJobs(); });
+
+/* ---------- Ask: a Groq-powered agent on the server that can act in the app ---------- */
+let chatTurns = [], chatCtl = null, chatBusy = false;
+const AV_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>`;
+const PAGE_LABEL = {skills:"Open Skills", plan:"Open Plan", jobs:"Open Jobs"};
+const ACT_LABEL = {skills:"Translated your story into skills", plan:"Built your return plan", jobs:"Searched live job listings"};
+function md(t){
+  const out = []; let list = null;
+  esc(t).split("\n").forEach(line => {
+    const l = line.trim().replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    if (/^[-*•]\s+/.test(l)) { (list = list || []).push(`<li>${l.replace(/^[-*•]\s+/, "")}</li>`); return; }
+    if (list) { out.push(`<ul>${list.join("")}</ul>`); list = null; }
+    if (l) out.push(`<p>${l}</p>`);
+  });
+  if (list) out.push(`<ul>${list.join("")}</ul>`);
+  return out.join("");
+}
+const scrollChat = () => { const log = $("#chatLog"); log.scrollTop = log.scrollHeight; };
+function addMsg(who, html){
+  const li = document.createElement("li"); li.className = "msg " + (who === "user" ? "me" : "bot");
+  li.innerHTML = `<span class="m-av">${AV_SVG}</span><div class="m-body"><ul class="m-acts"></ul><div class="m-text"></div></div>`;
+  li.querySelector(".m-text").innerHTML = html;
+  $("#chatLog").appendChild(li);
+  if (motion) gsap.from(li, {opacity:0, y:10, duration:.35, ease:"power2.out", clearProps:"opacity,transform"});
+  scrollChat(); return li;
+}
+function chatProfile(){
+  const now = $("#timeline .step.now h3");
+  return { story: $("#story").value.slice(0, 1500),
+    skills: (skillsData && skillsData.skills || []).map(s => s.skill), suggested_roles: (skillsData && skillsData.suggested_roles) || [],
+    child_age_months: +$("#age").value, childcare: $("#care").value, goal: $("#goal").value,
+    current_plan_phase: now ? now.firstChild.textContent : null };
+}
+function applyAction(a){
+  if (a.type === "skills") { $("#story").value = a.story || $("#story").value; skillsData = a.data; renderSkills(); }
+  if (a.type === "plan") { const i = a.inputs || {}; if (i.age != null) $("#age").value = i.age; if (i.care) $("#care").value = i.care; if (i.goal) $("#goal").value = i.goal;
+    planData = {...a.data, inputs:planInputs()}; renderPlan(); }
+  if (a.type === "jobs") { setJobQuery(a.data.query || {}); jobsData = a.data; renderJobs(); }
+}
+function setBusy(b){
+  chatBusy = b; const btn = $("#askSend");
+  btn.setAttribute("aria-label", b ? "Stop" : "Send");
+  btn.innerHTML = b ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+}
+async function sendAsk(text){
+  text = (text || "").trim(); if (!text || chatBusy) return;
+  $("#askEmpty").hidden = true; $("#askBox").value = ""; autosize();
+  addMsg("user", `<p>${esc(text)}</p>`); chatTurns.push({role:"user", content:text});
+  const li = addMsg("bot", '<span class="typing" aria-label="Thinking"><i></i><i></i><i></i></span>');
+  const body = li.querySelector(".m-text"), acts = li.querySelector(".m-acts"), opened = new Set();
+  setBusy(true); chatCtl = new AbortController();
+  try {
+    const r = await api("/api/chat", {messages:chatTurns.slice(-12), profile:chatProfile()}, chatCtl.signal);
+    (r.actions || []).forEach(a => { applyAction(a); const s = document.createElement("li"); s.className = "done"; s.textContent = ACT_LABEL[a.type] || "Done"; acts.appendChild(s); opened.add(a.type); });
+    if ((r.actions || []).length) queueSave();
+    body.innerHTML = md(r.reply || ""); chatTurns.push({role:"assistant", content:r.reply || ""});
+  } catch(e) {
+    body.innerHTML = e && e.error === "cancelled" ? '<p class="m-note">Stopped.</p>' : `<p class="m-note">${esc((e && e.message) || "Something went wrong. Try again.")}</p>`;
+  } finally {
+    if (opened.size) { const wrap = document.createElement("div"); wrap.className = "m-open";
+      [...opened].forEach(pg => { if (!PAGE_LABEL[pg]) return; const b = document.createElement("button"); b.type = "button"; b.textContent = PAGE_LABEL[pg] + " →"; b.onclick = () => goPage(pg); wrap.appendChild(b); });
+      li.querySelector(".m-body").appendChild(wrap); }
+    setBusy(false); chatCtl = null; scrollChat();
+  }
+}
+function autosize(){ const t = $("#askBox"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 160) + "px"; }
+$("#askBox").addEventListener("input", autosize);
+$("#askBox").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendAsk($("#askBox").value); } });
+$("#askForm").addEventListener("submit", e => { e.preventDefault(); if (chatBusy) { chatCtl && chatCtl.abort(); return; } sendAsk($("#askBox").value); });
+$$(".sugg").forEach(b => b.onclick = () => sendAsk(b.textContent));
+
+/* ---------- intro: the name appears, a hand-drawn ring draws around it, then it zooms into the page ---------- */
+function wobbly(cx, cy, rx, ry){
+  const n = 26, pts = [];
+  for (let i = 0; i <= n * 1.12; i++) {
+    const a = -2.2 + i / n * Math.PI * 2, j = 1 + Math.sin(i * 2.3) * .035 + Math.cos(i * 1.37) * .03 + i * .0016;
+    pts.push([cx + Math.cos(a) * rx * j, cy + Math.sin(a) * ry * j]);
+  }
+  const f = v => v.toFixed(1);
+  let d = `M${f(pts[0][0])},${f(pts[0][1])}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i-1] || pts[i], p1 = pts[i], p2 = pts[i+1], p3 = pts[i+2] || p2;
+    d += ` C${f(p1[0]+(p2[0]-p0[0])/6)},${f(p1[1]+(p2[1]-p0[1])/6)} ${f(p2[0]-(p3[0]-p1[0])/6)},${f(p2[1]-(p3[1]-p1[1])/6)} ${f(p2[0])},${f(p2[1])}`;
+  }
+  return d;
+}
+const hero = motion ? gsap.timeline({paused:true, defaults:{ease:"power3.out"}})
+    .from(".w-name .sw > i", {yPercent:115, duration:1, stagger:.06, ease:"power4.out"}, 0)
+    .from(".presents, .w-name-kn, .w-tagline, .w-start, .facts", {opacity:0, y:18, filter:BLUR, duration:.9, stagger:.08, clearProps:"opacity,transform,filter"}, .2)
+    .from("#bloom .pt.back", {scale:0, duration:.9, stagger:.06, ease:"back.out(1.5)"}, .2)
+    .from("#bloom .pt:not(.back)", {scale:0, duration:.9, stagger:.07, ease:"back.out(1.6)"}, .4)
+    .from("#bloom .ct, #stamens", {scale:0, transformOrigin:"50% 50%", duration:.5, ease:"back.out(2)"}, .85)
+    .from(".ring", {scale:.6, opacity:0, duration:1.2, stagger:.1}, .1)
+    .from("#dotPath", {rotation:-315, duration:1.8}, .3)
+    .from(".float-chip", {opacity:0, scale:.6, filter:BLUR, duration:.6, stagger:.12, ease:"back.out(1.8)"}, 1.1)
+    .from(".marquee", {opacity:0, y:30, duration:1.4}, .6) : null;
+if (motion) {
+  gsap.set(".float-chip", {xPercent:-50, yPercent:-50});
+  if (!lowPower) {
+    ambient.push(gsap.to("#petals", {rotation:360, svgOrigin:"50 50", duration:120, repeat:-1, ease:"none"}));
+    $$(".float-chip").forEach((c,i) => ambient.push(gsap.to(c, {y:-9, duration:2.2 + i*.35, yoyo:true, repeat:-1, ease:"sine.inOut", delay:2 + i*.15})));
+    ambient.push(gsap.to("#mq", {xPercent:-50, duration:38, repeat:-1, ease:"none"}));
+  }
+  const intro = $("#intro");
+  if (intro && root.classList.contains("js-intro")) {
+    const path = $("#introPath"); path.setAttribute("d", wobbly(180, 90, 165, 74));
+    const L = path.getTotalLength(); gsap.set(path, {strokeDasharray:L, strokeDashoffset:L});
+    const tl = gsap.timeline({onComplete:() => { intro.remove(); root.classList.remove("js-intro"); }})
+      .from(".intro-word i", {opacity:0, y:14, filter:"blur(6px)", duration:.55, stagger:.05, ease:"power3.out"})
+      .from(".intro-sub", {opacity:0, duration:.6}, .3)
+      .to(path, {strokeDashoffset:0, duration:1.15, ease:"power2.inOut"}, .35)
+      .to(".intro-in", {scale:1.15, opacity:0, filter:"blur(12px)", duration:.6, ease:"power2.in"}, "+=.2")
+      .to(".intro-sub", {opacity:0, duration:.3}, "<")
+      .to(intro, {opacity:0, duration:.5, ease:"power1.out"}, "-=.25")
+      .add(() => hero.play(), "-=.55");
+    intro.addEventListener("click", () => tl.progress(1), {once:true});
+  } else hero.play();
+} else { const i = $("#intro"); if (i) i.remove(); root.classList.remove("js-intro"); }
+
+/* ---------- tap ring (touch screens) ---------- */
+if (!matchMedia("(pointer:fine)").matches && !reduce) {
+  document.addEventListener("touchstart", e => { const t = e.touches[0]; if (!t) return;
+    const r = document.createElement("span"); r.className = "tap"; r.style.left = t.clientX + "px"; r.style.top = t.clientY + "px";
+    document.body.appendChild(r); setTimeout(() => r.remove(), 550); }, {passive:true});
+}
+
+/* ---------- go ---------- */
+document.body.dataset.screen = "welcome";
+splitAll(); showTheme(true); setKind("job"); renderSkills(); renderPlan(); renderJobs(); paintWho(); paintSaved(); goPage("skills", true);
+placeAll(); if (document.fonts) document.fonts.ready.then(placeAll); addEventListener("resize", placeAll);
+initFirebase();
+if (startHash === "privacy" || startHash === "terms") openLegal(startHash);
+</script>
+</body>
+</html>
