@@ -265,6 +265,11 @@ select{min-height:52px}
 .btn.google{background:var(--card);color:var(--text);border:1px solid var(--hair-strong);gap:.75rem;min-height:56px;font-size:1.0625rem}
 .btn.google svg{width:22px;height:22px}
 .btn.google:hover{background:var(--surface)}
+.or{display:flex;align-items:center;gap:.75rem;color:var(--muted,#888);font-size:.875rem}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--hair)}
+.btn.guest{min-height:52px;gap:.6rem}.btn.guest svg{width:20px;height:20px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.guest-save{display:grid;gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--hair)}
 .btn:disabled{opacity:.55;cursor:wait}
 .note.err{border-color:var(--hair-strong)}
 .cv{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding:1rem;margin:.5rem 0 .75rem;border-radius:var(--r-inner);background:var(--surface);border:1px solid var(--hair)}
@@ -367,7 +372,7 @@ input[type=range]{width:100%;accent-color:var(--primary);min-height:32px}
 /* ---------------- more page ---------------- */
 .profile{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
 .profile .av,.profile img{width:56px;height:56px;font-size:1.25rem}
-.profile .p-txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.profile .p-txt{flex:1 1 180px;min-width:0;display:flex;flex-direction:column}
 .profile .p-txt span{font-size:.9375rem;color:var(--text2)}
 .stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
 .stage h3{font-family:var(--font);font-size:.9375rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:.25rem}
@@ -474,7 +479,10 @@ footer b{color:var(--text)}
           <p class="help" data-i="si2">We need to know who you are so we can save your story, your return plan and the jobs you choose, and show them again when you come back.</p></div>
         <label class="consent"><input type="checkbox" id="consentBox"><span>I am 18 or older. I have read the <a href="#privacy" data-legal="privacy">Privacy Notice</a> and I agree to ReBloom using my information for the purposes it describes. I also accept the <a href="#terms" data-legal="terms">Terms of Use</a>.</span></label>
         <button class="btn google" id="googleBtn" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8h-4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg><span data-i="si4">Continue with Google</span></button>
+        <div class="or" aria-hidden="true"><span data-i="si8">or</span></div>
+        <button class="btn sec guest" id="guestBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span data-i="si9">Try as a guest</span></button>
         <p class="note err" id="signErr" hidden></p>
+        <p class="quiet small" data-i="si10">Guest mode needs no Google account. Your work is kept only in this browser and is deleted when you end the guest session. You can save it to Google later from <b>More</b>.</p>
         <p class="quiet" data-i="si7">We use your Google name and photo. Your story and plan are saved to your private ReBloom profile.</p>
 
       </div>
@@ -496,6 +504,7 @@ footer b{color:var(--text)}
           <thead><tr><th>Data</th><th>Where it comes from</th><th>Why we use it</th></tr></thead>
           <tbody>
             <tr><td>Name, email address, profile photo and account ID</td><td>Your Google account, when you sign in</td><td>To create your account, show your name and photo, and keep your profile private to you</td></tr>
+            <tr><td>Guest mode only: a random guest account ID (no name, email or photo)</td><td>Firebase creates it when you choose <b>Try as a guest</b></td><td>To keep your guest work private to this browser until you end the guest session or save it to Google</td></tr>
             <tr><td>Your career-break story</td><td>You type it</td><td>To create your skills profile, CV summary, return plan and job matches</td></tr>
             <tr><td>Your child's age in months, your childcare situation and your work goal</td><td>You choose them</td><td>To build your return plan</td></tr>
             <tr><td>Your skills profile and return plan</td><td>Created by the AI from your inputs</td><td>To show them again when you come back</td></tr>
@@ -532,7 +541,7 @@ footer b{color:var(--text)}
         <p>ReBloom is only for people aged 18 or over. We don't knowingly process the data of anyone under 18. If you think a child has signed up, email us and we'll delete the account.</p>
 
         <h2>6. How long we keep your data</h2>
-        <p>We keep your profile until you delete it. If the ReBloom project ends, we'll delete all profiles. Server logs are kept by our hosting provider for a limited time, and for up to one year where Indian law requires it.</p>
+        <p>We keep your profile until you delete it. A guest profile is deleted when you end the guest session; if you leave without ending it, it stays until you delete it from <b>More</b> in the same browser or the project ends. If the ReBloom project ends, we'll delete all profiles. Server logs are kept by our hosting provider for a limited time, and for up to one year where Indian law requires it.</p>
 
         <h2>7. Security</h2>
         <p>The website uses HTTPS. Only signed-in users can use the AI and job search, and our API keys stay on the server. Database rules let each person read and change only her own profile. If a data breach affects you, we'll tell you and the Data Protection Board of India as the law requires.</p>
@@ -550,6 +559,7 @@ footer b{color:var(--text)}
           <li>ನಿಮ್ಮ ಕಥೆಯನ್ನು AI ಮಾದರಿಗಾಗಿ Groq ಗೆ ಕಳುಹಿಸುತ್ತೇವೆ; ನಿಮ್ಮ ಹೆಸರು ಅಥವಾ ಇಮೇಲ್ ಕಳುಹಿಸುವುದಿಲ್ಲ. ಉದ್ಯೋಗ ಹುಡುಕಾಟಕ್ಕಾಗಿ ಹುಡುಕಾಟದ ಪದಗಳು ಮತ್ತು ನಗರ ಮಾತ್ರ Jooble ಗೆ ಹೋಗುತ್ತವೆ.</li>
           <li>ನಿಮ್ಮ ಡೇಟಾವನ್ನು ನಾವು ಮಾರುವುದಿಲ್ಲ, ಜಾಹೀರಾತು ತೋರಿಸುವುದಿಲ್ಲ ಮತ್ತು ಉದ್ಯೋಗದಾತರೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳುವುದಿಲ್ಲ.</li>
           <li>"ಇನ್ನಷ್ಟು" ಪುಟದಲ್ಲಿ ನಿಮ್ಮ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು ಅಥವಾ ಖಾತೆ ಮತ್ತು ಡೇಟಾವನ್ನು ಅಳಿಸಿ ಒಪ್ಪಿಗೆ ಹಿಂಪಡೆಯಬಹುದು.</li>
+          <li>ಅತಿಥಿ ಮೋಡ್‌ನಲ್ಲಿ ಹೆಸರು ಅಥವಾ ಇಮೇಲ್ ಬೇಕಿಲ್ಲ; ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸಿದಾಗ ನಿಮ್ಮ ಅತಿಥಿ ಡೇಟಾ ಅಳಿಸಲಾಗುತ್ತದೆ.</li>
           <li>ರಿಬ್ಲೂಮ್ 18 ವರ್ಷ ಮೇಲ್ಪಟ್ಟವರಿಗೆ ಮಾತ್ರ.</li>
           <li>ಪ್ರಶ್ನೆ ಅಥವಾ ದೂರುಗಳಿಗೆ ಮೇಲಿನ ಇಮೇಲ್‌ಗೆ ಬರೆಯಿರಿ. 30 ದಿನಗಳಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ. ಭಾರತದ ಡೇಟಾ ಸಂರಕ್ಷಣಾ ಮಂಡಳಿಗೂ ದೂರು ನೀಡಬಹುದು.</li>
         </ul>
@@ -564,7 +574,7 @@ footer b{color:var(--text)}
         <p>ReBloom is a free student project by Team Phoenix Queens, built for the Sahyadri Science Talent Hunt 2026. It gives AI-made suggestions and shows job listings from other websites. It is not a recruitment agency or an employer, and it doesn't promise you a job or interview.</p>
 
         <h2>2. Who can use it</h2>
-        <p>You must be 18 or older and sign in with your own Google account. Keep your account secure and don't let others use it.</p>
+        <p>You must be 18 or older and either sign in with your own Google account or use guest mode. Keep your account secure and don't let others use it.</p>
 
         <h2>3. AI suggestions</h2>
         <p>Your skills profile, return plan, job match scores and Ask answers are made by an AI model and can be wrong or incomplete. They are general guidance, not legal, medical or financial advice. Check important details yourself, and for legal questions about maternity rights, confirm with your employer's HR or an official source.</p>
@@ -720,6 +730,11 @@ footer b{color:var(--text)}
           <div class="p-txt"><b id="profName"></b><span id="profMode"></span></div>
           <button class="btn sec" id="signout" data-i="signout">Sign out</button>
         </div>
+        <div class="guest-save" id="guestSave" hidden>
+          <p class="help" data-i="g1">You're using ReBloom as a guest. Save your work to a Google account so it isn't lost and you can open it on any device.</p>
+          <button class="btn google" id="linkBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8h-4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg><span data-i="g2">Save my work with Google</span></button>
+          <p class="note err" id="linkErr" hidden></p>
+        </div>
       </div>
 
       <div class="card" id="rights">
@@ -835,7 +850,9 @@ const KN = {
   start:"ಪ್ರಾರಂಭಿಸಿ", fa1:"ನಿಜವಾದ ಉದ್ಯೋಗಗಳು", fb1:"Jooble ನಿಂದ ಲೈವ್ ಪಟ್ಟಿಗಳು", fa2:"AI ಮಾರ್ಗದರ್ಶಿ", fb2:"ಉಚಿತ, ಮುಕ್ತ AI ಮಾದರಿಗಳು",
   fa3:"ಖಾಸಗಿ", fb3:"ನಿಮ್ಮ ಕಥೆ ನಿಮಗೆ ಮಾತ್ರ",
   si1:"ರಿಬ್ಲೂಮ್‌ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ", si2:"ನಿಮ್ಮ ಕಥೆ, ಮರಳುವ ಯೋಜನೆ ಮತ್ತು ನೀವು ಆರಿಸಿದ ಉದ್ಯೋಗಗಳನ್ನು ಉಳಿಸಲು ನೀವು ಯಾರೆಂದು ನಮಗೆ ತಿಳಿಯಬೇಕು.",
-  si4:"Google ಮೂಲಕ ಮುಂದುವರಿಸಿ", si7:"ನಿಮ್ಮ Google ಹೆಸರು ಮತ್ತು ಫೋಟೋ ಬಳಸುತ್ತೇವೆ. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನಿಮ್ಮ ಖಾಸಗಿ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
+  si4:"Google ಮೂಲಕ ಮುಂದುವರಿಸಿ", si8:"ಅಥವಾ", si9:"ಅತಿಥಿಯಾಗಿ ಪ್ರಯತ್ನಿಸಿ",
+  si10:"ಅತಿಥಿ ಮೋಡ್‌ಗೆ Google ಖಾತೆ ಬೇಕಿಲ್ಲ. ನಿಮ್ಮ ಕೆಲಸ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಉಳಿಯುತ್ತದೆ ಮತ್ತು ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸಿದಾಗ ಅಳಿಸಲಾಗುತ್ತದೆ. ನಂತರ <b>ಇನ್ನಷ್ಟು</b> ಪುಟದಿಂದ Google ಗೆ ಉಳಿಸಬಹುದು.",
+  g1:"ನೀವು ಅತಿಥಿಯಾಗಿ ರಿಬ್ಲೂಮ್ ಬಳಸುತ್ತಿದ್ದೀರಿ. ಕೆಲಸ ಕಳೆದುಹೋಗದಂತೆ ಮತ್ತು ಯಾವುದೇ ಸಾಧನದಲ್ಲಿ ತೆರೆಯಲು Google ಖಾತೆಗೆ ಉಳಿಸಿ.", g2:"ನನ್ನ ಕೆಲಸವನ್ನು Google ಗೆ ಉಳಿಸಿ", si7:"ನಿಮ್ಮ Google ಹೆಸರು ಮತ್ತು ಫೋಟೋ ಬಳಸುತ್ತೇವೆ. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನಿಮ್ಮ ಖಾಸಗಿ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
   jw:"ಹುದ್ದೆ ಅಥವಾ ಪದಗಳು", jl:"ನಗರ", kj:"ಉದ್ಯೋಗಗಳು", ki:"ಇಂಟರ್ನ್‌ಶಿಪ್", jgo:"ನಿಜವಾದ ಉದ್ಯೋಗ ಹುಡುಕಿ", jf:"ಪಟ್ಟಿಯಲ್ಲಿ ಇರಬೇಕಾದದ್ದು",
   planNoteH:"ಯೋಜನೆಯ ಸಾರಾಂಶ",
   t1:"ಕೌಶಲ್ಯ ಅನುವಾದಕ", l1:"ನಿಮ್ಮ ವೃತ್ತಿ ವಿರಾಮದಲ್ಲಿ ನೀವು ನಿಭಾಯಿಸಿದ್ದನ್ನು ಬರೆಯಿರಿ. ರಿಬ್ಲೂಮ್ ಅದನ್ನು ಉದ್ಯೋಗದಾತರು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಕೌಶಲ್ಯಗಳಾಗಿ ಬದಲಾಯಿಸುತ್ತದೆ.",
@@ -861,13 +878,19 @@ const KN = {
 };
 const T = {
   en:{hi:n=>`Hi, ${n}`, welcomeBack:n=>`Welcome back, ${n}. Your story and plan are where you left them.`, cont:n=>`Continue as ${n}`,
-      acctMode:"Signed in with Google", savedAcct:"Saved to your account", saving:"Saving…", saveFail:"Couldn't save. Check your connection.",
+      acctMode:"Signed in with Google", guestMode:"Guest · saved only in this browser", guestName:"Guest", endGuest:"End guest session",
+      endGuestAsk:"End the guest session? This deletes your guest story, skills and plan. To keep them, choose Save my work with Google first.",
+      guestEnded:"Guest session ended and its data deleted", linked:"Saved to your Google account",
+      linkTaken:"This Google account already has a ReBloom profile. End the guest session, then sign in with Google to open it.", savedAcct:"Saved to your account", savedGuest:"Saved in guest mode", saving:"Saving…", saveFail:"Couldn't save. Check your connection.",
       planBuild:"Build my plan", planUpdate:"Update my plan", planBusy:"Building your plan…", here:"You are here",
       planChanged:"Your childcare or goal changed. Update to rebuild the plan.",
       planEmpty:"Set your child's age, childcare and goal, then press Build my plan. The AI builds a plan around your skills and situation.",
       jobsEmpty:"Search real, current job and internship listings in India. If you've translated your story, the AI ranks them against your skills."},
   kn:{hi:n=>`ನಮಸ್ಕಾರ, ${n}`, welcomeBack:n=>`ಮತ್ತೆ ಸ್ವಾಗತ, ${n}. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನೀವು ಬಿಟ್ಟಲ್ಲೇ ಇವೆ.`, cont:n=>`${n} ಆಗಿ ಮುಂದುವರಿಸಿ`,
-      acctMode:"Google ಮೂಲಕ ಸೈನ್ ಇನ್", savedAcct:"ನಿಮ್ಮ ಖಾತೆಯಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ", saving:"ಉಳಿಸಲಾಗುತ್ತಿದೆ…", saveFail:"ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+      acctMode:"Google ಮೂಲಕ ಸೈನ್ ಇನ್", guestMode:"ಅತಿಥಿ · ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಉಳಿಸಲಾಗಿದೆ", guestName:"ಅತಿಥಿ", endGuest:"ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸಿ",
+      endGuestAsk:"ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸುವುದೇ? ಇದು ನಿಮ್ಮ ಅತಿಥಿ ಕಥೆ, ಕೌಶಲ್ಯ ಮತ್ತು ಯೋಜನೆಯನ್ನು ಅಳಿಸುತ್ತದೆ. ಉಳಿಸಲು ಮೊದಲು 'ನನ್ನ ಕೆಲಸವನ್ನು Google ಗೆ ಉಳಿಸಿ' ಆರಿಸಿ.",
+      guestEnded:"ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿದಿದೆ ಮತ್ತು ಅದರ ಡೇಟಾ ಅಳಿಸಲಾಗಿದೆ", linked:"ನಿಮ್ಮ Google ಖಾತೆಗೆ ಉಳಿಸಲಾಗಿದೆ",
+      linkTaken:"ಈ Google ಖಾತೆಗೆ ಈಗಾಗಲೇ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್ ಇದೆ. ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸಿ, ನಂತರ Google ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡಿ.", savedAcct:"ನಿಮ್ಮ ಖಾತೆಯಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ", savedGuest:"ಅತಿಥಿ ಮೋಡ್‌ನಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ", saving:"ಉಳಿಸಲಾಗುತ್ತಿದೆ…", saveFail:"ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
       planBuild:"ನನ್ನ ಯೋಜನೆ ರಚಿಸಿ", planUpdate:"ಯೋಜನೆ ನವೀಕರಿಸಿ", planBusy:"ಯೋಜನೆ ರಚಿಸಲಾಗುತ್ತಿದೆ…", here:"ನೀವು ಇಲ್ಲಿದ್ದೀರಿ",
       planChanged:"ಆರೈಕೆ ಅಥವಾ ಗುರಿ ಬದಲಾಗಿದೆ. ಯೋಜನೆ ನವೀಕರಿಸಿ.",
       planEmpty:"ಮಗುವಿನ ವಯಸ್ಸು, ಆರೈಕೆ ಮತ್ತು ಗುರಿ ಆರಿಸಿ, ನಂತರ 'ನನ್ನ ಯೋಜನೆ ರಚಿಸಿ' ಒತ್ತಿ.",
@@ -973,13 +996,16 @@ function avatarInto(sel){
 }
 function paintWho(){
   const greet = $("#greet");
+  $("#signout").textContent = session && session.guest ? T[lang].endGuest : (lang === "kn" ? KN.signout : EN.signout);
   if (!session) { $("#who").hidden = true; greet.hidden = true; return; }
+  if (session.guest) session.name = session.full = T[lang].guestName;
   $("#who").hidden = false; avatarInto("#whoAv"); $("#whoName").textContent = T[lang].hi(session.name);
   avatarInto("#profAv"); $("#profName").textContent = session.full || session.name;
-  $("#profMode").textContent = session.email ? `${T[lang].acctMode} · ${session.email}` : T[lang].acctMode;
+  $("#profMode").textContent = session.guest ? T[lang].guestMode : session.email ? `${T[lang].acctMode} · ${session.email}` : T[lang].acctMode;
+  $("#guestSave").hidden = !session.guest;
   greet.hidden = !session.back; if (session.back) greet.textContent = T[lang].welcomeBack(session.name);
 }
-function paintSaved(){ $$(".savedTxt").forEach(s => s.textContent = savedMode ? T[lang][savedMode] : ""); $$(".saved").forEach(s => s.hidden = !savedMode); }
+function paintSaved(){ const k = savedMode === "savedAcct" && session && session.guest ? "savedGuest" : savedMode; $$(".savedTxt").forEach(s => s.textContent = k ? T[lang][k] : ""); $$(".saved").forEach(s => s.hidden = !savedMode); }
 
 async function api(path, payload, signal){
   if (!fbAuth || !fbAuth.currentUser) throw {error:"signed_out", message:"Please sign in again."};
@@ -1017,6 +1043,28 @@ $("#googleBtn").onclick = async () => {
     pendingSignIn = false; signinError(authMsg(e));
   }
 };
+$("#guestBtn").onclick = async () => {
+  if (!fbAuth) return; signinError(""); pendingSignIn = true;
+  const b = $("#guestBtn"); b.disabled = true;
+  try { await fbAuth.signInAnonymously(); }
+  catch(e) {
+    pendingSignIn = false;
+    signinError(e && e.code === "auth/operation-not-allowed" ? "Guest mode isn't switched on yet. In Firebase, enable Anonymous under Authentication, Sign-in method." : authMsg(e));
+  } finally { b.disabled = !$("#consentBox").checked; }
+};
+$("#linkBtn").onclick = async () => {
+  const u = fbAuth && fbAuth.currentUser; if (!u || !u.isAnonymous) return;
+  const err = $("#linkErr"); err.hidden = true;
+  try {
+    const res = await u.linkWithPopup(new firebase.auth.GoogleAuthProvider());
+    const user = res.user;
+    session = { uid:user.uid, full:user.displayName || "", name:(user.displayName || user.email || "there").split(/[\s@]/)[0], photo:user.photoURL, email:user.email, guest:false, back:false };
+    paintWho(); save(); toast(T[lang].linked);
+  } catch(e) {
+    const m = e && (e.code === "auth/credential-already-in-use" || e.code === "auth/email-already-in-use") ? T[lang].linkTaken : authMsg(e);
+    if (m) { err.textContent = m; err.hidden = false; }
+  }
+};
 async function onUser(user){
   if (!user) {
     const was = !!session; session = null; skillsData = planData = jobsData = null; savedMode = "";
@@ -1025,7 +1073,10 @@ async function onUser(user){
     return;
   }
   const fresh = pendingSignIn || !!store.get("rb-pending"); store.del("rb-pending"); pendingSignIn = false;
-  session = { uid:user.uid, full:user.displayName || "", name:(user.displayName || user.email || "there").split(/[\s@]/)[0], photo:user.photoURL, email:user.email, back:!fresh };
+  const guest = user.isAnonymous;
+  session = guest
+    ? { uid:user.uid, full:T[lang].guestName, name:T[lang].guestName, photo:null, email:null, guest:true, back:!fresh }
+    : { uid:user.uid, full:user.displayName || "", name:(user.displayName || user.email || "there").split(/[\s@]/)[0], photo:user.photoURL, email:user.email, guest:false, back:!fresh };
   paintWho();
   await loadProfile();
   if (fresh) {
@@ -1040,10 +1091,21 @@ async function onUser(user){
   }
   else if (PAGES.includes(startHash)) { showScreen("app"); goPage(startHash, true); }
 }
-$("#signout").onclick = () => fbAuth && fbAuth.signOut();
+$("#signout").onclick = async () => {
+  if (!fbAuth) return;
+  const u = fbAuth.currentUser;
+  if (u && u.isAnonymous) {                       // a guest account can't be signed back into, so end it and delete its data
+    if (!window.confirm(T[lang].endGuestAsk)) return;
+    clearTimeout(saveTimer); if (session) session.deleting = true;
+    try { await userDoc().delete(); } catch(e) {}
+    try { await u.delete(); } catch(e) { await fbAuth.signOut(); }
+    toast(T[lang].guestEnded); return;
+  }
+  fbAuth.signOut();
+};
 
 /* ---------- consent, privacy notice, terms, and data rights (DPDP Act) ---------- */
-$("#consentBox").addEventListener("change", e => { $("#googleBtn").disabled = !e.target.checked; });
+$("#consentBox").addEventListener("change", e => { $("#googleBtn").disabled = $("#guestBtn").disabled = !e.target.checked; });
 let legalFrom = "welcome";
 function openLegal(which){
   $("#legal-privacy").hidden = which !== "privacy"; $("#legal-terms").hidden = which !== "terms";
@@ -1078,8 +1140,11 @@ $("#delYes").onclick = async () => {
     try { await fbAuth.currentUser.delete(); }
     catch(e) {
       if (e.code !== "auth/requires-recent-login") throw e;
-      await fbAuth.currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());   // Google asks her to confirm it's her
-      await fbAuth.currentUser.delete();
+      if (fbAuth.currentUser.isAnonymous) await fbAuth.signOut();   // guest profile is already deleted
+      else {
+        await fbAuth.currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());   // Google asks her to confirm it's her
+        await fbAuth.currentUser.delete();
+      }
     }
     ["rb-theme","rb-pending"].forEach(k => store.del(k));
     $("#delConfirm").hidden = true; msg.textContent = "";

@@ -8,7 +8,7 @@ Built by **Team Phoenix Queens** for the Sahyadri Science Talent Hunt 2026.
 
 | Page | What it does | Powered by |
 |------|--------------|------------|
-| **Sign in** | Google sign-in. Each mother's story, plan and searches are saved to her private profile. | Firebase Auth + Firestore |
+| **Sign in** | Google sign-in, or **guest mode** to try it without an account. Each mother's story, plan and searches are saved to her private profile. Guests can save their work to Google later. | Firebase Auth (Google + Anonymous) + Firestore |
 | **Skills** | She writes about her break; the AI turns it into a skills profile, a CV summary and roles to search for. | Groq API (Llama) |
 | **Plan** | A phased return-to-work plan built from her child's age, childcare and goal. | Groq API |
 | **Jobs** | Real, current jobs and internships in India, filtered by what listings mention (work from home, part-time, flexible hours, returnship, women encouraged) and ranked against her skills. | Jooble API + Groq API |
@@ -64,7 +64,7 @@ Why Groq and not Gemini's free tier: Google's free-tier terms let Google use wha
 ### 3. Firebase (Google sign-in and saving)
 1. Go to [console.firebase.google.com](https://console.firebase.google.com) and create a project.
 2. **Project settings → Your apps → Add app → Web.** Copy `apiKey`, `authDomain`, `projectId` and `appId` into `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID` and `FIREBASE_APP_ID`.
-3. **Authentication → Sign-in method → Google → Enable.**
+3. **Authentication → Sign-in method → Google → Enable.** For guest mode, also enable **Anonymous**.
 4. **Firestore Database → Create database** (production mode). Open **Rules**, paste the contents of `firestore.rules` and publish.
 5. After deploying, add your Render address (for example `rebloom.onrender.com`) under **Authentication → Settings → Authorized domains**.
 
@@ -119,7 +119,8 @@ What the team must do:
 
 ## Safety and privacy
 
-- Only signed-in users who have given consent can use the AI and job endpoints, with a per-user hourly limit.
+- Only signed-in users who have given consent can use the AI and job endpoints, with a per-user hourly limit. Guests get a smaller limit (`GUEST_CALLS_PER_HOUR`, default 15) that is also capped per network address (`GUEST_CALLS_PER_IP_HOUR`, default 30), so nobody can drain the free AI quota by opening new guest sessions.
+- Ending a guest session deletes the guest profile and account.
 - Each profile is readable only by its owner (Firestore rules).
 - The assistant gives general information only on legal questions, never diagnoses, and points to India's free Tele-MANAS helpline (14416) if someone sounds in distress.
 - Jobs by [Jooble](https://in.jooble.org).

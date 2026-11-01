@@ -36,6 +36,10 @@ FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
 JOOBLE_API_KEY = os.environ.get("JOOBLE_API_KEY", "")
 JOOBLE_HOST = os.environ.get("JOOBLE_HOST", "jooble.org")   # set to in.jooble.org if your key is for the India site
 AI_CALLS_PER_HOUR = int(os.environ.get("AI_CALLS_PER_HOUR", "40"))
+# Guests (Firebase anonymous sign-in) get a smaller allowance, also capped per
+# network address so nobody can drain the free Groq quota by opening new guest sessions.
+GUEST_CALLS_PER_HOUR = int(os.environ.get("GUEST_CALLS_PER_HOUR", "15"))
+GUEST_CALLS_PER_IP_HOUR = int(os.environ.get("GUEST_CALLS_PER_IP_HOUR", "30"))
 
 _google_req = google_requests.Request()
 
@@ -90,6 +94,23 @@ _calls = {}
 _calls_lock = threading.Lock()
 
 
+def client_ip():
+    # Render puts the visitor's address first in X-Forwarded-For.
+    fwd = request.headers.get("X-Forwarded-For", "")
+    return (fwd.split(",")[0].strip() if fwd else request.remote_addr) or "unknown"
+
+
+def _spend(key, limit, message):
+    now = time.time()
+    with _calls_lock:
+        recent = [t for t in _calls.get(key, []) if now - t < 3600]
+        if len(recent) >= limit:
+            _calls[key] = recent
+            raise ApiError(429, "rate_limited", message)
+        recent.append(now)
+        _calls[key] = recent
+
+
 def signed_in(ai=True):
     def wrap(f):
         @wraps(f)
@@ -102,16 +123,17 @@ def signed_in(ai=True):
             except Exception:
                 raise ApiError(401, "signed_out", "Your sign-in expired. Please sign in again.")
             g.uid = claims["sub"]
+            g.guest = (claims.get("firebase") or {}).get("sign_in_provider") == "anonymous"
             if ai:
                 if not GROQ_API_KEY:
                     raise ApiError(503, "not_configured", "The AI isn't set up on the server yet (GROQ_API_KEY is missing).")
-                now = time.time()
-                with _calls_lock:
-                    recent = [t for t in _calls.get(g.uid, []) if now - t < 3600]
-                    if len(recent) >= AI_CALLS_PER_HOUR:
-                        raise ApiError(429, "rate_limited", "You've used ReBloom a lot this hour. Please try again later.")
-                    recent.append(now)
-                    _calls[g.uid] = recent
+                if g.guest:
+                    _spend("ip:" + client_ip(), GUEST_CALLS_PER_IP_HOUR,
+                           "Guest mode is busy right now. Sign in with Google to keep going, or try again later.")
+                    _spend(g.uid, GUEST_CALLS_PER_HOUR,
+                           "You've reached the guest limit for this hour. Sign in with Google to keep going.")
+                else:
+                    _spend(g.uid, AI_CALLS_PER_HOUR, "You've used ReBloom a lot this hour. Please try again later.")
             return f(*a, **kw)
         return inner
     return wrap
