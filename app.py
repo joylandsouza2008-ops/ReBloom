@@ -4,7 +4,7 @@ ReBloom server (Team Phoenix Queens).
 Serves the website and four API endpoints:
   POST /api/translate  career-break story  -> skills profile        (Groq API, free tier, open models)
   POST /api/plan       child age, support  -> phased return plan    (Groq)
-  POST /api/jobs       role, city, filters -> real jobs/internships (Careerjet API, free, ranked by Groq)
+  POST /api/jobs       role, city, filters -> real jobs/internships (Himalayas API, free, no key, ranked by Groq)
   POST /api/chat       chat messages       -> reply + app actions   (Groq with tool calling)
 
 Groq's API does not keep or train on requests by default, so stories can be sent there.
@@ -36,8 +36,8 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GRIEVANCE_EMAIL = os.environ.get("GRIEVANCE_EMAIL", "")
 GRIEVANCE_NAME = os.environ.get("GRIEVANCE_NAME", "Team Phoenix Queens")
 FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
-CAREERJET_API_KEY = os.environ.get("CAREERJET_API_KEY", "").strip()
-CAREERJET_LOCALE = os.environ.get("CAREERJET_LOCALE", "en_IN")   # en_IN = careerjet.co.in, jobs in India
+# Jobs come from Himalayas' public remote-jobs API: free, no key, no sign-up. Set JOBS_ENABLED=0 to switch the Jobs page off.
+JOBS_ENABLED = os.environ.get("JOBS_ENABLED", "1") != "0"
 AI_CALLS_PER_HOUR = int(os.environ.get("AI_CALLS_PER_HOUR", "40"))
 # Guests (Firebase anonymous sign-in) get a smaller allowance, also capped per
 # network address so nobody can drain the free Groq quota by opening new guest sessions.
@@ -83,7 +83,7 @@ def config():
         },
         ai=bool(GROQ_API_KEY),
         grievance={"name": GRIEVANCE_NAME, "email": GRIEVANCE_EMAIL},
-        jobs=bool(CAREERJET_API_KEY),
+        jobs=JOBS_ENABLED,
     )
 
 
@@ -315,7 +315,7 @@ def api_plan():
     return jsonify(do_plan(*plan_inputs(data), lang_of(data)))
 
 
-# --------------------------------------------------------------------------- 3. jobs (Careerjet, free publisher API, India)
+# --------------------------------------------------------------------------- 3. jobs (Himalayas, free remote-jobs API, open to India)
 FLAG_PATTERNS = {
     "remote": r"work[\s-]?from[\s-]?home|\bwfh\b|\bremote\b|\bhybrid\b",
     "parttime": r"part[\s-]?time",
@@ -331,45 +331,63 @@ def clean(s):
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(s or ""))).strip()
 
 
+def _open_to_india(j):
+    locs = [str(l).lower() for l in (j.get("locationRestrictions") or [])]
+    zones = j.get("timezoneRestrictions") or []
+    return (not locs or any("india" in l or l == "in" for l in locs)) and (not zones or 5.5 in zones)
+
+
+def _salary(j):
+    lo, hi, cur, per = j.get("minSalary"), j.get("maxSalary"), j.get("currency"), j.get("salaryPeriod")
+    if not lo and not hi:
+        return None
+    fmt = lambda n: f"{int(n):,}"
+    amount = f"{fmt(lo)}–{fmt(hi)}" if lo and hi and hi != lo else fmt(lo or hi)
+    period = {"annual": "a year", "yearly": "a year", "monthly": "a month", "hourly": "an hour"}.get(str(per).lower(), "")
+    return " ".join(x for x in (cur, amount, period) if x)
+
+
 def search_listings(what, where, kind):
-    if not CAREERJET_API_KEY:
-        raise ApiError(503, "not_configured", "Job search isn't set up on the server yet (CAREERJET_API_KEY is missing).")
-    query = f"{what} internship" if kind == "internship" else what
-    location = where or "India"
-    key = (query.lower(), location.lower())
+    if not JOBS_ENABLED:
+        raise ApiError(503, "not_configured", "Job search is switched off on the server.")
+    query = f"{what} intern" if kind == "internship" else what
+    key = query.lower()
     hit = _job_cache.get(key)
-    if hit and time.time() - hit[0] < 900:
+    if hit and time.time() - hit[0] < 3600:      # Himalayas refreshes daily, so an hour's cache is plenty
         return hit[1]
-    proto = request.headers.get("X-Forwarded-Proto", request.scheme).split(",")[0].strip()
-    site = f"{proto}://{request.host}/"
-    # Careerjet asks for the visitor's IP and browser so it can stop automated misuse (see the Privacy Notice).
-    params = {"locale_code": CAREERJET_LOCALE, "keywords": query, "location": location, "sort": "relevance",
-              "page": 1, "pagesize": 50, "page_size": 50,
-              "user_ip": client_ip(), "user_agent": request.headers.get("User-Agent", "Mozilla/5.0")[:300], "referrer": site}
-    r = requests.get("https://search.api.careerjet.net/v4/query", params=params, auth=(CAREERJET_API_KEY, ""),
-                     headers={"Referer": site}, timeout=20)
-    try:
-        data = r.json()
-    except ValueError:
-        data = {}
-    if r.status_code != 200 or data.get("type") == "ERROR":
-        app.logger.warning("Careerjet %s: %s", r.status_code, r.text[:300])
-        raise ApiError(502, "jobs_unavailable", "The job search service didn't answer. Try again in a moment.")
-    if data.get("type") == "LOCATIONS":
-        names = [l.get("name") for l in (data.get("solveLocations") or []) if l.get("name")][:3]
-        hint = f" For example: {', '.join(names)}." if names else ""
-        raise ApiError(400, "ambiguous_location", f"There's more than one place called {location}. Add the state or district.{hint}")
-    jobs = []
-    for i, j in enumerate(data.get("jobs") or []):
-        desc, title = clean(j.get("description")), clean(j.get("title"))
-        text = f"{title} {desc}".lower()
-        flags = [f for f, pat in FLAG_PATTERNS.items() if re.search(pat, text)]
+    raw = []
+    for page in (1, 2):
+        r = requests.get("https://himalayas.app/jobs/api/search", timeout=20,
+                         params={"q": query, "country": "India", "page": page},
+                         headers={"User-Agent": "ReBloom/1.0 (student project; remote jobs for mothers returning to work)"})
+        if r.status_code == 429:
+            raise ApiError(429, "rate_limited", "The job search is busy right now. Please try again in a minute.")
+        if r.status_code != 200:
+            app.logger.warning("Himalayas %s: %s", r.status_code, r.text[:300])
+            if page == 1:
+                raise ApiError(502, "jobs_unavailable", "The job search service didn't answer. Try again in a moment.")
+            break
+        batch = (r.json() or {}).get("jobs") or []
+        raw += batch
+        if len(batch) < 20:
+            break
+    jobs, seen = [], set()
+    for j in raw:
+        link = j.get("applicationLink") or j.get("guid")
+        if not link or link in seen or not _open_to_india(j):
+            continue
+        seen.add(link)
+        title, desc, etype = clean(j.get("title")), clean(j.get("excerpt")), clean(j.get("employmentType"))
+        text = f"{title} {desc} {etype}".lower()
+        flags = ["remote"] + [f for f, pat in FLAG_PATTERNS.items() if f != "remote" and re.search(pat, text)]
+        locs = j.get("locationRestrictions") or []
+        pub = j.get("pubDate")
         jobs.append({
-            "id": str(i), "title": title,
-            "company": clean(j.get("company")) or None, "location": clean(j.get("locations")) or None,
-            "created": j.get("date"), "url": j.get("url"),
-            "salary": clean(j.get("salary")) or None, "source": clean(j.get("site")) or None,
-            "snippet": desc[:240], "flags": flags,
+            "id": str(len(jobs)), "title": title, "company": clean(j.get("companyName")) or None,
+            "location": "Remote · " + (", ".join(map(str, locs[:3])) if locs else "worldwide, open to India"),
+            "created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(pub)) if isinstance(pub, (int, float)) else None,
+            "url": link, "source": "Himalayas", "source_url": j.get("guid") or link,
+            "salary": _salary(j), "type": etype or None, "snippet": desc[:240], "flags": flags,
         })
     _job_cache[key] = (time.time(), jobs)
     return jobs
@@ -437,7 +455,7 @@ CHAT_TOOLS = [
          "childcare": {"type": "string", "enum": list(CARE)},
          "goal": {"type": "string", "enum": list(GOAL)}}}},
     {"name": "search_jobs",
-     "description": "Search real, current job or internship listings in India (Careerjet) and show them on her Jobs page. Returns the top matches.",
+     "description": "Search real, current remote (work-from-home) job or internship listings open to people in India (Himalayas) and show them on her Jobs page. Returns the top matches.",
      "input_schema": {"type": "object", "properties": {
          "what": {"type": "string", "description": "Role or keywords in English"},
          "where": {"type": "string", "description": "City in India, or empty for all India"},
@@ -449,7 +467,7 @@ CHAT_TOOLS = [
 
 
 def chat_system(profile, lang):
-    jobs_note = "" if CAREERJET_API_KEY else (
+    jobs_note = "" if JOBS_ENABLED else (
         "- Live job search is not switched on yet. If she asks for jobs, suggest roles and search words from her skills "
         "and tell her the Jobs page is coming soon. Never invent job listings, companies or links.\n")
     return (
@@ -458,7 +476,7 @@ def chat_system(profile, lang):
         f"- Reply in the language she writes in. The app is showing {lang}.\n"
         "- Use the tools to act in the app: translate her story when she describes her break, build her plan when she mentions her "
         "child's age, childcare or goal, and search jobs when she asks about work or internships. After a tool, say in one sentence what changed.\n"
-        "- Job listings come from Careerjet and are real. Their policies are only what each listing says; suggest she confirm with the employer.\n"
+        "- Job listings come from Himalayas and are real remote (work-from-home) roles open to people in India. Their policies are only what each listing says; suggest she confirm with the employer.\n"
         + jobs_note +
         "- For maternity rights in India, give general information (for example the Maternity Benefit Act on leave, creches and work from home) "
         "and suggest she confirm with HR or an official source. You are not a lawyer.\n"
@@ -489,7 +507,7 @@ def api_chat():
         "English" if re.search(r"[A-Za-z]", messages[-1]["content"]) else lang)
     convo = [{"role": "system", "content": chat_system(profile, lang) +
               f"\nIMPORTANT: write your reply to her latest message in {reply_lang}."}] + messages
-    available = [t for t in CHAT_TOOLS if t["name"] != "search_jobs" or CAREERJET_API_KEY]   # no job key yet: don't offer job search
+    available = [t for t in CHAT_TOOLS if t["name"] != "search_jobs" or JOBS_ENABLED]   # no job key yet: don't offer job search
     tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in available]
     for _ in range(5):
         msg = groq({"messages": convo, "tools": tools, "tool_choice": "auto", "temperature": 0.6, "max_tokens": 1200})

@@ -15,10 +15,8 @@ services:
         sync: false
       - key: GRIEVANCE_NAME
         value: Team Phoenix Queens
-      - key: CAREERJET_API_KEY
-        sync: false
-      - key: CAREERJET_LOCALE
-        value: en_IN
+      - key: JOBS_ENABLED
+        value: "1"
       - key: FIREBASE_API_KEY
         sync: false
       - key: FIREBASE_AUTH_DOMAIN
