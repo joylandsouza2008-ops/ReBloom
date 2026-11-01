@@ -11,11 +11,11 @@ Built by **Team Phoenix Queens** for the Sahyadri Science Talent Hunt 2026.
 | **Sign in** | Google sign-in, or **guest mode** to try it without an account. Each mother's story, plan and searches are saved to her private profile. Guests can save their work to Google later. | Firebase Auth (Google + Anonymous) + Firestore |
 | **Skills** | She writes about her break; the AI turns it into a skills profile, a CV summary and roles to search for. | Groq API (Llama) |
 | **Plan** | A phased return-to-work plan built from her child's age, childcare and goal. | Groq API |
-| **Jobs** | Real, current jobs and internships in India, filtered by what listings mention (work from home, part-time, flexible hours, returnship, women encouraged) and ranked against her skills. | Jooble API + Groq API |
+| **Jobs** | Real, current jobs and internships in India, filtered by what listings mention (work from home, part-time, flexible hours, returnship, women encouraged) and ranked against her skills. | Careerjet API + Groq API |
 | **Ask** | A chat assistant in English or Kannada that can also translate her story, build her plan and search jobs for her. | Groq API (tool calling) |
 | **Privacy and Terms** | Privacy Notice (with a Kannada summary), Terms of Use, consent at sign-in, download and delete your data. | DPDP Act, 2023 |
 
-No sample or made-up data: every job is a live listing from Jooble with a link to apply. Filters only check what each listing says, so details like a creche must be confirmed with the employer.
+No sample or made-up data: every job is a live listing from Careerjet with a link to apply. Filters only check what each listing says, so details like a creche must be confirmed with the employer.
 
 ## How it works
 
@@ -29,7 +29,7 @@ Flask server (app.py) on Render
   ├─ checks the token (only signed-in users can spend the API keys)
   ├─ limits AI calls per user per hour
   ├─ Groq API    → skills, plan, job ranking, chat agent (free, no data kept)
-  └─ Jooble API  → live job and internship listings for India
+  └─ Careerjet API → live job and internship listings for India
 ```
 
 All API keys live in Render's environment variables. They are never in the page or in this repository.
@@ -39,7 +39,7 @@ All API keys live in Render's environment variables. They are never in the page 
 | Service | Plan | How to make sure you're never billed |
 |---------|------|--------------------------------------|
 | Groq (AI) | Free tier, no card | Don't add a card or upgrade to a paid plan. When the free limit is reached, requests simply wait or fail with a "try again" message. |
-| Jooble (jobs) | Free API key | Free; no card needed. Searches are cached for 15 minutes to save calls. (Adzuna is not used: its API now needs a paid plan after 25 test calls.) |
+| Careerjet (jobs) | Free publisher API key | Free; no card needed. Searches are cached for 15 minutes to save calls. |
 | Firebase (sign-in, database) | Spark plan, no card | Stay on **Spark**. Never upgrade to **Blaze**, which needs a card. On Spark, Firebase stops at its free limits instead of charging. |
 | Render (hosting) | Free web service | Choose the **Free** instance type and don't add a card. The free site sleeps when idle, so the first visit can take up to a minute to load. |
 
@@ -56,10 +56,10 @@ You need four accounts. Create them yourself and paste the keys only into Render
 
 Why Groq and not Gemini's free tier: Google's free-tier terms let Google use what you send to improve its products, allow human review, and ask you not to send personal information. Mothers' stories are personal information, so ReBloom uses Groq, which says it doesn't keep or train on API requests by default.
 
-### 2. Jooble (jobs and internships)
-1. Go to [jooble.org/api/about](https://jooble.org/api/about) and fill in the API request form (project name ReBloom, a short description, your email).
-2. Jooble emails you an API key. Copy it into `JOOBLE_API_KEY`.
-3. If your key was issued for the India site and searches return nothing, set `JOOBLE_HOST` to `in.jooble.org`.
+### 2. Careerjet (jobs and internships)
+1. Open a free Careerjet publisher (partner) account and register your ReBloom website address.
+2. Careerjet gives you an API key. Copy it into `CAREERJET_API_KEY`.
+3. `CAREERJET_LOCALE` is `en_IN` (jobs in India from careerjet.co.in). Careerjet requires each search to include the visitor's IP address and browser type, so the Privacy Notice says so.
 
 ### 3. Firebase (Google sign-in and saving)
 1. Go to [console.firebase.google.com](https://console.firebase.google.com) and create a project.
@@ -98,7 +98,7 @@ Add `localhost` to Firebase's authorized domains to sign in locally.
 
 ## Tech
 
-Python (Flask, gunicorn), Groq API (Llama models), Jooble API, Firebase Authentication and Firestore, GSAP for animation, Google Fonts (Manrope, Noto Sans, Noto Sans Kannada).
+Python (Flask, gunicorn), Groq API (gpt-oss-120b), Careerjet API, Firebase Authentication and Firestore, GSAP for animation, Google Fonts (Manrope, Noto Sans, Noto Sans Kannada).
 
 ## Privacy and the DPDP Act, 2023
 
@@ -108,7 +108,7 @@ What ReBloom does:
 - **Withdraw consent as easily as giving it:** More → Delete my account and data (one confirmation step).
 - **Rights:** download all her data (More → Download my data), edit her inputs any time, delete everything, and a grievance contact that replies within 30 days (the law allows up to 90).
 - **Children:** 18+ only, as the Act requires verifiable parental consent for anyone younger.
-- **Data minimisation:** her name and email are never sent to the AI; only search words and city go to Jooble; chat messages aren't stored.
+- **Data minimisation:** her name and email are never sent to the AI; only search words, city and basic device details (IP address, browser type, which Careerjet requires) go to Careerjet; chat messages aren't stored.
 - **Security:** HTTPS, sign-in required for every API call, per-user limits, keys only on the server, and database rules so each profile is private.
 
 What the team must do:
@@ -123,4 +123,4 @@ What the team must do:
 - Ending a guest session deletes the guest profile and account.
 - Each profile is readable only by its owner (Firestore rules).
 - The assistant gives general information only on legal questions, never diagnoses, and points to India's free Tele-MANAS helpline (14416) if someone sounds in distress.
-- Jobs by [Jooble](https://in.jooble.org).
+- Jobs by [Careerjet](https://www.careerjet.co.in).
