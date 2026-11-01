@@ -23,6 +23,8 @@ from functools import wraps
 import requests
 from flask import Flask, request, jsonify, send_from_directory, g
 from google.oauth2 import id_token as google_id_token
+
+import qrcodegen
 from google.auth.transport import requests as google_requests
 
 app = Flask(__name__, static_folder="static", static_url_path="")
@@ -83,6 +85,18 @@ def config():
         grievance={"name": GRIEVANCE_NAME, "email": GRIEVANCE_EMAIL},
         jobs=bool(JOOBLE_API_KEY),
     )
+
+
+@app.get("/qr.svg")
+def qr_svg():
+    # QR code for this site's own address, so it stays right if the domain changes
+    proto = request.headers.get("X-Forwarded-Proto", request.scheme).split(",")[0].strip()
+    url = f"{proto}://{request.host}/"
+    try:
+        body_svg = qrcodegen.svg(url)
+    except ValueError:
+        raise ApiError(500, "qr_failed", "Address too long for a QR code.")
+    return app.response_class(body_svg, mimetype="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
 
 
 @app.get("/healthz")

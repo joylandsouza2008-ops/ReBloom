@@ -269,6 +269,10 @@ select{min-height:52px}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--hair)}
 .btn.guest{min-height:52px;gap:.6rem}.btn.guest svg{width:20px;height:20px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
+.share-row{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+.qr{width:168px;height:168px;border-radius:14px;background:#fff;padding:6px;display:block}
+.share-txt{display:grid;gap:.9rem;flex:1 1 200px;min-width:0}
+.share-url{font-weight:700;font-size:1.0625rem;overflow-wrap:anywhere;margin:0}
 .guest-save{display:grid;gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--hair)}
 .btn:disabled{opacity:.55;cursor:wait}
 .note.err{border-color:var(--hair-strong)}
@@ -737,6 +741,21 @@ footer b{color:var(--text)}
         </div>
       </div>
 
+      <div class="card" id="share">
+        <div class="head"><h2 data-i="sh1">Share ReBloom</h2>
+          <p class="help" data-i="sh2">Know a mother getting ready to go back to work? Let her scan this code with her phone camera.</p></div>
+        <div class="share-row">
+          <img class="qr" src="/qr.svg" width="168" height="168" alt="QR code that opens ReBloom" loading="lazy">
+          <div class="share-txt">
+            <p class="share-url" id="shareUrl"></p>
+            <div class="row">
+              <button class="btn sec" id="copyLink" type="button" data-i="sh3">Copy link</button>
+              <button class="btn sec" id="shareLink" type="button" data-i="sh4" hidden>Share</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="card" id="rights">
         <div class="head"><h2 data-i="r1">Your data and rights</h2>
           <p class="help" data-i="r2">See everything ReBloom holds about you, or delete it. Deleting also withdraws your consent.</p></div>
@@ -850,7 +869,7 @@ const KN = {
   start:"ಪ್ರಾರಂಭಿಸಿ", fa1:"ನಿಜವಾದ ಉದ್ಯೋಗಗಳು", fb1:"Jooble ನಿಂದ ಲೈವ್ ಪಟ್ಟಿಗಳು", fa2:"AI ಮಾರ್ಗದರ್ಶಿ", fb2:"ಉಚಿತ, ಮುಕ್ತ AI ಮಾದರಿಗಳು",
   fa3:"ಖಾಸಗಿ", fb3:"ನಿಮ್ಮ ಕಥೆ ನಿಮಗೆ ಮಾತ್ರ",
   si1:"ರಿಬ್ಲೂಮ್‌ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ", si2:"ನಿಮ್ಮ ಕಥೆ, ಮರಳುವ ಯೋಜನೆ ಮತ್ತು ನೀವು ಆರಿಸಿದ ಉದ್ಯೋಗಗಳನ್ನು ಉಳಿಸಲು ನೀವು ಯಾರೆಂದು ನಮಗೆ ತಿಳಿಯಬೇಕು.",
-  si4:"Google ಮೂಲಕ ಮುಂದುವರಿಸಿ", si8:"ಅಥವಾ", si9:"ಅತಿಥಿಯಾಗಿ ಪ್ರಯತ್ನಿಸಿ",
+  si4:"Google ಮೂಲಕ ಮುಂದುವರಿಸಿ", si8:"ಅಥವಾ", sh1:"ರಿಬ್ಲೂಮ್ ಹಂಚಿಕೊಳ್ಳಿ", sh2:"ಕೆಲಸಕ್ಕೆ ಮರಳಲು ಸಿದ್ಧವಾಗುತ್ತಿರುವ ತಾಯಿ ನಿಮಗೆ ಗೊತ್ತೇ? ಅವರ ಫೋನ್ ಕ್ಯಾಮೆರಾದಿಂದ ಈ ಕೋಡ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಹೇಳಿ.", sh3:"ಲಿಂಕ್ ನಕಲಿಸಿ", sh4:"ಹಂಚಿಕೊಳ್ಳಿ", si9:"ಅತಿಥಿಯಾಗಿ ಪ್ರಯತ್ನಿಸಿ",
   si10:"ಅತಿಥಿ ಮೋಡ್‌ಗೆ Google ಖಾತೆ ಬೇಕಿಲ್ಲ. ನಿಮ್ಮ ಕೆಲಸ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಉಳಿಯುತ್ತದೆ ಮತ್ತು ಅತಿಥಿ ಸೆಷನ್ ಮುಗಿಸಿದಾಗ ಅಳಿಸಲಾಗುತ್ತದೆ. ನಂತರ <b>ಇನ್ನಷ್ಟು</b> ಪುಟದಿಂದ Google ಗೆ ಉಳಿಸಬಹುದು.",
   g1:"ನೀವು ಅತಿಥಿಯಾಗಿ ರಿಬ್ಲೂಮ್ ಬಳಸುತ್ತಿದ್ದೀರಿ. ಕೆಲಸ ಕಳೆದುಹೋಗದಂತೆ ಮತ್ತು ಯಾವುದೇ ಸಾಧನದಲ್ಲಿ ತೆರೆಯಲು Google ಖಾತೆಗೆ ಉಳಿಸಿ.", g2:"ನನ್ನ ಕೆಲಸವನ್ನು Google ಗೆ ಉಳಿಸಿ", si7:"ನಿಮ್ಮ Google ಹೆಸರು ಮತ್ತು ಫೋಟೋ ಬಳಸುತ್ತೇವೆ. ನಿಮ್ಮ ಕಥೆ ಮತ್ತು ಯೋಜನೆ ನಿಮ್ಮ ಖಾಸಗಿ ರಿಬ್ಲೂಮ್ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
   jw:"ಹುದ್ದೆ ಅಥವಾ ಪದಗಳು", jl:"ನಗರ", kj:"ಉದ್ಯೋಗಗಳು", ki:"ಇಂಟರ್ನ್‌ಶಿಪ್", jgo:"ನಿಜವಾದ ಉದ್ಯೋಗ ಹುಡುಕಿ", jf:"ಪಟ್ಟಿಯಲ್ಲಿ ಇರಬೇಕಾದದ್ದು",
@@ -1052,6 +1071,17 @@ $("#guestBtn").onclick = async () => {
     signinError(e && e.code === "auth/operation-not-allowed" ? "Guest mode isn't switched on yet. In Firebase, enable Anonymous under Authentication, Sign-in method." : authMsg(e));
   } finally { b.disabled = !$("#consentBox").checked; }
 };
+/* ---------- share: QR code + link ---------- */
+const siteUrl = location.origin + "/";
+$("#shareUrl").textContent = siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+$("#copyLink").onclick = async () => {
+  try { await navigator.clipboard.writeText(siteUrl); toast(lang === "kn" ? "ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ" : "Link copied"); }
+  catch(e) { window.prompt("Copy this link", siteUrl); }
+};
+if (navigator.share) {
+  $("#shareLink").hidden = false;
+  $("#shareLink").onclick = () => navigator.share({ title:"ReBloom", text:"Motherhood isn't a gap. Turn your career break into skills employers understand.", url:siteUrl }).catch(() => {});
+}
 $("#linkBtn").onclick = async () => {
   const u = fbAuth && fbAuth.currentUser; if (!u || !u.isAnonymous) return;
   const err = $("#linkErr"); err.hidden = true;
