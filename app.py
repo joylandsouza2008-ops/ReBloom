@@ -28,7 +28,8 @@ from google.auth.transport import requests as google_requests
 app = Flask(__name__, static_folder="static", static_url_path="")
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+# Groq retired llama-3.3-70b-versatile on 16 Aug 2026; gpt-oss-120b is its recommended replacement.
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "").strip() or "openai/gpt-oss-120b"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GRIEVANCE_EMAIL = os.environ.get("GRIEVANCE_EMAIL", "")
 GRIEVANCE_NAME = os.environ.get("GRIEVANCE_NAME", "Team Phoenix Queens")
@@ -159,13 +160,18 @@ def lang_of(data):
 
 
 # --------------------------------------------------------------------------- AI helpers (Groq, free tier)
-def groq(payload, retry=True):
-    r = requests.post(GROQ_URL, json={"model": GROQ_MODEL, **payload}, timeout=60,
+def groq(request_body, retry=True):
+    payload = {"model": GROQ_MODEL, **request_body}
+    if "gpt-oss" in GROQ_MODEL:
+        # reasoning models think before answering; keep it short and leave room for the answer
+        payload.setdefault("reasoning_effort", "low")
+        payload["max_tokens"] = payload.get("max_tokens", 1024) + 2048
+    r = requests.post(GROQ_URL, json=payload, timeout=60,
                       headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"})
     if r.status_code == 429:
         raise ApiError(429, "rate_limited", "The free AI limit is used up for the moment. Please try again in a minute.")
     if r.status_code == 400 and retry and "tool_use_failed" in r.text:
-        return groq(payload, retry=False)      # the model wrote a malformed tool call; one more try
+        return groq(request_body, retry=False)      # the model wrote a malformed tool call; one more try
     if r.status_code != 200:
         app.logger.warning("Groq %s: %s", r.status_code, r.text[:400])
         raise ApiError(502, "ai_unavailable", "The AI couldn't answer right now. Try again in a moment.")

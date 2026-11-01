@@ -52,7 +52,7 @@ You need four accounts. Create them yourself and paste the keys only into Render
 ### 1. Groq API key (free AI)
 1. Go to [console.groq.com](https://console.groq.com) and sign up (no card needed).
 2. **API Keys → Create API Key.** Copy it into `GROQ_API_KEY`.
-3. The default model is `llama-3.3-70b-versatile`. If Groq retires it, pick another model from Groq's model list and set `GROQ_MODEL`. For better Kannada answers you can try `openai/gpt-oss-120b`.
+3. The default model is `openai/gpt-oss-120b` (Groq retired `llama-3.3-70b-versatile` in August 2026). If Groq retires this one too, pick a current model from Groq's model list that supports tool use and set `GROQ_MODEL`.
 
 Why Groq and not Gemini's free tier: Google's free-tier terms let Google use what you send to improve its products, allow human review, and ask you not to send personal information. Mothers' stories are personal information, so ReBloom uses Groq, which says it doesn't keep or train on API requests by default.
 
