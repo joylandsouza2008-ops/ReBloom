@@ -12,22 +12,22 @@
    (Skills, Plan, Jobs, More) with tabs under the top bar on computers and a tab bar at the bottom on phones.
    Look: calm and flat, black and white only, round shapes, Phoenix Queens mark. */
 :root{
-  --bg:#0a0a0a; --card:#141414; --surface:#1a1a1a; --hair:#262626; --hair-strong:#737373;
-  --text:#ffffff; --text2:#a3a3a3; --muted:#5c5c5c; --on-text:#000000; --start-hover:#d4d4d4;
-  --primary:#ffffff; --on-primary:#000000; --secondary:#262626; --on-secondary:#ffffff; --petal:#d4d4d4;
+  --bg:#080222; --card:#110a38; --surface:#180f47; --hair:#261e4c; --hair-strong:#5a5288;
+  --text:#f1ecff; --text2:#a49dc6; --muted:#6f6898; --on-text:#080222; --start-hover:#f78cc2;
+  --primary:#f46caf; --on-primary:#1a0626; --secondary:#261e4c; --on-secondary:#f1ecff; --petal:#f46caf; --accent:#5eeabf;
   --font:"Noto Sans","Noto Sans Kannada","Nirmala UI",system-ui,sans-serif;
   --display:"Manrope","Noto Sans","Noto Sans Kannada",system-ui,sans-serif;
   --r-card:18px; --r-inner:12px;
   color-scheme:dark;
 }
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
-  --bg:#fafafa; --card:#ffffff; --surface:#f2f2f2; --hair:#e5e5e5; --hair-strong:#8a8a8a;
-  --text:#0a0a0a; --text2:#525252; --muted:#a3a3a3; --on-text:#ffffff; --start-hover:#333333;
-  --primary:#0a0a0a; --on-primary:#ffffff; --secondary:#ececec; --on-secondary:#0a0a0a; --petal:#c4c4c4; color-scheme:light}}
+  --bg:#f3f0ff; --card:#ffffff; --surface:#ebe6fb; --hair:#d9d4ef; --hair-strong:#a59fc6;
+  --text:#100836; --text2:#68608c; --muted:#8e87ad; --on-text:#ffffff; --start-hover:#a81d63;
+  --primary:#c8267b; --on-primary:#ffffff; --secondary:#e6e0fb; --on-secondary:#100836; --petal:#e05a9c; --accent:#1b9368; color-scheme:light}}
 :root[data-theme="light"]{
-  --bg:#fafafa; --card:#ffffff; --surface:#f2f2f2; --hair:#e5e5e5; --hair-strong:#8a8a8a;
-  --text:#0a0a0a; --text2:#525252; --muted:#a3a3a3; --on-text:#ffffff; --start-hover:#333333;
-  --primary:#0a0a0a; --on-primary:#ffffff; --secondary:#ececec; --on-secondary:#0a0a0a; --petal:#c4c4c4; color-scheme:light}
+  --bg:#f3f0ff; --card:#ffffff; --surface:#ebe6fb; --hair:#d9d4ef; --hair-strong:#a59fc6;
+  --text:#100836; --text2:#68608c; --muted:#8e87ad; --on-text:#ffffff; --start-hover:#a81d63;
+  --primary:#c8267b; --on-primary:#ffffff; --secondary:#e6e0fb; --on-secondary:#100836; --petal:#e05a9c; --accent:#1b9368; color-scheme:light}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -91,8 +91,8 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1rem 4rem}
 /* ---------------- welcome screen ---------------- */
 .welcome{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:3rem;min-height:min(calc(100dvh - 9rem),720px)}
 .w-copy{display:flex;flex-direction:column;align-items:flex-start;gap:1.25rem;min-width:0}
-.presents{display:inline-flex;align-items:center;gap:.75rem;font-size:.9375rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary)}
-.presents::before{content:"";width:2rem;height:2px;flex:none;border-radius:2px;background:var(--primary)}
+.presents{display:inline-flex;align-items:center;gap:.75rem;font-size:.9375rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.presents::before{content:"";width:2rem;height:2px;flex:none;border-radius:2px;background:var(--accent)}
 :root[lang="kn"] .presents{letter-spacing:0}
 .w-title{display:flex;flex-direction:column;gap:.25rem}
 .w-name{font-family:var(--display);font-size:clamp(3.25rem,7.5vw,6rem);font-weight:800;line-height:1;letter-spacing:-.03em}
@@ -100,7 +100,7 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .w-tagline{max-width:34ch;font-size:clamp(1.125rem,1.8vw,1.375rem);line-height:1.6;color:var(--text2)}
 .w-greet{font-size:1.0625rem;font-weight:600}
 .w-start{margin-top:.5rem;min-height:60px;min-width:12rem;padding:0 2rem;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;border:0;border-radius:9999px;
-  background:var(--text);color:var(--on-text);font-size:1.25rem;font-weight:600;cursor:pointer;transition:background-color .15s,scale .15s}
+  background:var(--primary);color:var(--on-primary);font-size:1.25rem;font-weight:600;cursor:pointer;transition:background-color .15s,scale .15s}
 .w-start svg{width:24px;height:24px}
 .w-start:hover{background:var(--start-hover)}
 .w-start:active{scale:.98}
@@ -306,7 +306,7 @@ select{min-height:52px}
 .legal p,.legal li{font-size:1rem;line-height:1.7}
 .legal ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.35rem}
 .legal a,.legal-links a,#rights a,.consent a{color:var(--text);text-underline-offset:3px}
-.eyebrow{font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
+.eyebrow{font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .tbl{overflow-x:auto;border:1px solid var(--hair);border-radius:var(--r-inner)}
 .tbl table{border-collapse:collapse;width:100%;min-width:520px;font-size:.9375rem}
 .tbl th,.tbl td{text-align:left;vertical-align:top;padding:.6rem .75rem;border-bottom:1px solid var(--hair)}
