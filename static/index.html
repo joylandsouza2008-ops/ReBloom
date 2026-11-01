@@ -1327,7 +1327,8 @@ function renderJobs(anim){
     el.innerHTML = `<p class="quiet jobs-empty">${T[lang].jobsEmpty}</p>`; return;
   }
   const q = jobsData.query || {}, jobs = jobsData.jobs || [];
-  st.textContent = jobs.length ? `${jobs.length} shown of ${jobsData.total_found} remote ${q.kind === "internship" ? "internships" : "jobs"} found for “${q.what}”, open to India`
+  const relaxedNote = jobsData.relaxed ? ` None of them mention ${(q.flags || []).map(f => (FLAG_LABEL[f] || f).toLowerCase()).join(" or ")}, so these are the closest roles. Ask the employer about it.` : "";
+  st.textContent = jobs.length ? `${jobs.length} shown of ${jobsData.total_found} remote ${q.kind === "internship" ? "internships" : "jobs"} found for “${q.what}”, open to India.${relaxedNote}`
                                : `No remote listings matched “${q.what}”${(q.flags || []).length ? " with those filters" : ""}. Try fewer filters or a broader role, like “customer support” or “operations”.`;
   el.innerHTML = jobs.map(j => { const url = safeUrl(j.url), has = j.match != null;
     const sal = j.salary || (j.salary_min ? (j.salary_max && j.salary_max !== j.salary_min ? `${money(j.salary_min)}–${money(j.salary_max)} a year` : `${money(j.salary_min)} a year`) : "");

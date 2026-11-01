@@ -347,18 +347,18 @@ def _salary(j):
     return " ".join(x for x in (cur, amount, period) if x)
 
 
-def search_listings(what, where, kind):
+def search_listings(what, where, kind, employment=None):
     if not JOBS_ENABLED:
         raise ApiError(503, "not_configured", "Job search is switched off on the server.")
     query = f"{what} intern" if kind == "internship" else what
-    key = query.lower()
+    key = (query.lower(), employment)
     hit = _job_cache.get(key)
     if hit and time.time() - hit[0] < 3600:      # Himalayas refreshes daily, so an hour's cache is plenty
         return hit[1]
     raw = []
     for page in (1, 2):
         r = requests.get("https://himalayas.app/jobs/api/search", timeout=20,
-                         params={"q": query, "country": "India", "page": page},
+                         params={"q": query, "country": "India", "page": page, **({"employment_type": employment} if employment else {})},
                          headers={"User-Agent": "ReBloom/1.0 (student project; remote jobs for mothers returning to work)"})
         if r.status_code == 429:
             raise ApiError(429, "rate_limited", "The job search is busy right now. Please try again in a minute.")
@@ -405,10 +405,18 @@ RANK_SCHEMA = {
 
 
 def do_jobs(what, where, kind, flags, skills, lang):
-    jobs = search_listings(what, where, kind)
+    jobs = [dict(j) for j in search_listings(what, where, kind)]      # copies, so the cache isn't changed
+    if "parttime" in flags:                      # ask Himalayas for part-time roles directly, then merge
+        urls = {j["url"] for j in jobs}
+        jobs = [dict(j) for j in search_listings(what, where, kind, "Part Time") if j["url"] not in urls] + jobs
+        for i, j in enumerate(jobs):
+            j["id"] = str(i)
     found = len(jobs)
+    relaxed = False
     if flags:
-        jobs = [j for j in jobs if all(f in j["flags"] for f in flags)]
+        matched = [j for j in jobs if all(f in j["flags"] for f in flags)]
+        relaxed = not matched and bool(jobs)     # none mention the filters: show the closest roles anyway, and say so
+        jobs = matched or jobs
     jobs = jobs[:15]
     if jobs and skills:
         listing = "\n".join(f'{j["id"]} | {j["title"]} | {j["company"] or ""} | {j["snippet"][:200]}' for j in jobs)
@@ -424,7 +432,7 @@ def do_jobs(what, where, kind, flags, skills, lang):
             j["match"] = max(0, min(100, int(r["match"]))) if r and str(r.get("match", "")).isdigit() else None
             j["why"] = r.get("why") if r else None
         jobs.sort(key=lambda j: j["match"] or 0, reverse=True)
-    return {"jobs": jobs, "total_found": found, "query": {"what": what, "where": where, "kind": kind, "flags": flags}}
+    return {"jobs": jobs, "total_found": found, "relaxed": relaxed, "query": {"what": what, "where": where, "kind": kind, "flags": flags}}
 
 
 def job_inputs(data):
