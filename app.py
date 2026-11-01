@@ -456,7 +456,11 @@ def api_chat():
         raise ApiError(400, "bad_request", "Send a message.")
 
     actions, reply = [], []
-    convo = [{"role": "system", "content": chat_system(profile, lang)}] + messages
+    # Reply in the language of her latest message (Kannada script → Kannada), whatever the app is showing.
+    reply_lang = "Kannada" if re.search(r"[\u0C80-\u0CFF]", messages[-1]["content"]) else (
+        "English" if re.search(r"[A-Za-z]", messages[-1]["content"]) else lang)
+    convo = [{"role": "system", "content": chat_system(profile, lang) +
+              f"\nIMPORTANT: write your reply to her latest message in {reply_lang}."}] + messages
     available = [t for t in CHAT_TOOLS if t["name"] != "search_jobs" or JOOBLE_API_KEY]   # no job key yet: don't offer job search
     tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in available]
     for _ in range(5):
